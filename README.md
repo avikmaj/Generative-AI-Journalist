@@ -72,6 +72,8 @@ To work through the uploads step by step, use
 [docs/09-upload-checklist.md](docs/09-upload-checklist.md).
 To read corpora straight from this repo instead of uploading copies, see
 [docs/10-github-direct-access.md](docs/10-github-direct-access.md).
+For per-platform copy-paste setup cards (name, objective, instructions, upload list, test prompts), see
+[docs/11-setup-cards.md](docs/11-setup-cards.md).
 
 ## Skill index
 
