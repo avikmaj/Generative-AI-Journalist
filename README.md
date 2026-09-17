@@ -68,6 +68,8 @@ Then follow [docs/02-setup-claude.md](docs/02-setup-claude.md),
 [docs/04-setup-grok.md](docs/04-setup-grok.md).
 For a single copy-paste checklist covering all three platforms, project names, objectives, exact
 upload lists and test prompts, see [docs/08-project-setup.md](docs/08-project-setup.md).
+To work through the uploads step by step, use
+[docs/09-upload-checklist.md](docs/09-upload-checklist.md).
 
 ## Skill index
 
