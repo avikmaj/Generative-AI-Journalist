@@ -139,20 +139,21 @@ vip/<vip_name>/
 
 ---
 
-## VIP Roadmap
+## VIP Scope — all protocols
 
-| Priority | VIP | Protocol | Status |
-|---|---|---|---|
-| 1 | axi4 | AXI4 (full) | PLANNED |
-| 2 | axi4lite | AXI4-Lite | PLANNED |
-| 3 | axi_stream | AXI-Stream | PLANNED |
-| 4 | apb4 | APB4 | PLANNED |
-| 5 | ahb5 | AHB5 | PLANNED |
-| 6 | axi3 | AXI3 | PLANNED |
-| 7 | ace | ACE/ACE-Lite | PLANNED |
-| 8 | chi | CHI-B | PLANNED |
+The factory has **no restricted VIP list**. Every protocol in `vip-portfolio.md` is in scope —
+USB, chiplet and bus, MIPI, automotive, memory, networking, SoC and avionics, PCIe and CXL, storage,
+AMBA, display, RISC-V and others — along with any protocol not listed and any customer-proprietary
+interface.
 
----
+The lifecycle, regression tiers, PASS authority policy, skeleton and signoff artifacts below are
+identical for every VIP regardless of protocol. Nothing in the flow is protocol-specific; only the
+transaction fields, constraints, coverpoints and assertions are, and those are derived from the
+protocol specification.
+
+Sequence work by demand, not by a fixed roadmap. Record the current active set and priority order in
+`/areas/vip-factory.md`, not in this document — a hardcoded roadmap goes stale and gets mistaken for
+a limit.
 
 ## VIP Lifecycle (mandatory for every VIP)
 

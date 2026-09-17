@@ -2,16 +2,17 @@
 name: vip-factory
 description: >-
   VIP Factory — autonomous SystemVerilog/UVM verification IP engineering organization with
-  evidence-gated execution. Use WHENEVER the task is to build, run, or sign off a VIP or
-  testbench: build a new VIP / copy the skeleton / compile / elaborate / simulate / run a
-  test / regression / L0-L5 tier / nightly or stress run / seed management / result.json /
-  regression database / PASS or FAIL or NOT_VERIFIED status / coverage closure gate /
-  assertion vacuity gate / GATE 0-11 / testplan or signoff document / dv_runner / Makefile /
-  compile.sh / run.sh / regression.sh / Verilator or VCS or Questa or Xcelium portability /
-  GitHub CI for DV / waveform triage / daily VIP status. Also use when asked whether
-  something "passed" in a verification context. DO NOT use for UVM methodology teaching,
-  protocol theory, formal or coverage technique explanation (that is dv-engineering-suite),
-  and never for film, video, image, music or business content.
+  evidence-gated execution. Covers every protocol: AMBA, PCIe/CXL, USB, MIPI, DDR/LPDDR/HBM,
+  Ethernet and TSN, CAN/LIN automotive, storage, display, UCIe chiplet, SoC peripheral,
+  avionics, RISC-V, NoC and proprietary interfaces. Use WHENEVER the task is to build, run or
+  sign off a VIP or testbench: new VIP / skeleton / compile / elaborate / simulate / run a
+  test / regression / L0-L5 tier / nightly or stress run / seeds / result.json / regression
+  database / PASS or FAIL or NOT_VERIFIED / coverage closure / assertion vacuity gate /
+  GATE 0-11 / testplan or signoff doc / dv_runner / Makefile / simulator portability /
+  DV CI / waveform triage / daily VIP status. Also use when asked whether something "passed"
+  in a verification context. DO NOT use for UVM methodology teaching, protocol theory, or
+  formal and coverage technique explanation (that is dv-engineering-suite), and never for
+  film, video, image, music or business content.
 ---
 
 # VIP Factory — DV Engineering Execution OS
@@ -30,6 +31,7 @@ subsystem, FPGA and ASIC verification.
 | 2 · Ground truth | `knowledge/dv/DV_Engineering_Bible_Vol1.md` · `knowledge/dv/agentic_ai_dv_architecture.md` · `knowledge/dv/AI_DV_Master_Engineer_v3_1.md` | Methodology substrate |
 | 3 · Methodology | `skills/dv/dv-engineering-suite/` — route via its mode router | Technique depth |
 | 4 · Execution | `references/vip-lifecycle-and-structure.md` · `references/tb-infra-guide.md` · `references/skeleton-guide.md` · `references/env-guide.md` · `scripts/dv_runner.py` | Actually running things |
+| Scope | `references/vip-portfolio.md` | Which VIP, and where its protocol depth lives |
 
 Never skip Layer 1. Never reach Layer 3 before Layer 2.
 
@@ -39,6 +41,30 @@ Never skip Layer 1. Never reach Layer 3 before Layer 2.
 |---|---|---|
 | build VIP · new VIP · skeleton · compile · simulate · regression · L0–L5 · gate · PASS · FAIL · dv_runner · Makefile · CI | **Factory** | Layer 1 → Layer 4 → evidence-based status |
 | vplan · UVM architecture · SVA technique · coverage modelling · debug method · protocol theory · signoff methodology | **Methodology** | Hand off to `dv-engineering-suite` |
+
+## Scope — every VIP, no exceptions
+
+There is no approved-protocol list. The factory builds any VIP: AMBA (AXI, AHB, APB, CHI, ACE,
+AXI-Stream, ATB, CXS) · PCIe and CXL · USB and Type-C · MIPI (CSI-2, DSI, I3C, C/D/M-PHY, UniPro) ·
+memory (DDR, LPDDR, HBM, GDDR, DFI, DIMM variants) · networking (Ethernet 10M–1600G, Ultra Ethernet,
+TSN, MACsec, IPsec, Interlaken) · automotive (CAN, CAN FD, CAN XL, LIN, SENT, FlexRay, CXPI,
+Automotive Ethernet) · storage (NVMe, UFS, SD/SDIO, ONFI, SATA, eMMC) · display (DP, eDP, HDMI,
+HDCP, LVDS, V-by-One) · chiplet (UCIe, BoW) · SoC peripheral (GPIO, PWM, WDT, PIT, SPI, I2C, UART) ·
+avionics (ARINC, MIL-STD-1553, SpaceWire, SMPTE SDI) · RISC-V and interconnect (TileLink, PLIC,
+NoC) · and any proprietary interface.
+
+Full catalogue and protocol-depth routing: `references/vip-portfolio.md`.
+
+**The flow never changes with the protocol.** Gates 0–11, tiers L0–L5, the PASS authority policy, the
+skeleton and the signoff artifacts are identical for every VIP. Only the transaction fields, legal
+constraints, coverpoints and assertions differ, and those are derived from that protocol's
+specification — never from memory of the standard.
+
+Most of this portfolio has no methodology module yet. That is expected, not a blocker: demand the
+spec, extract `FR-###` requirements from it, and derive the stimulus, coverage and assertion model
+from those requirements. The procedure is in `references/vip-portfolio.md`.
+
+Never tell the user a protocol is out of scope. If the spec is missing, ask for the spec.
 
 ## Team structure — act as all of these simultaneously
 
@@ -181,8 +207,9 @@ in a `bind` block, never inline in the DUT.
 **Gap detection before Gates 7 and 8.** Cross-check against the protocol spec, routing to the
 methodology suite: AMBA (AXI/AHB/APB/CHI/ACE/AXI-Stream) → `11_AMBA_Protocols.md`; high-speed
 (PCIe/DDR/USB/Ethernet) → `12_High_Speed_Interfaces.md`; embedded (SPI/I2C/UART/CAN/JTAG) →
-`13_Embedded_Protocols.md`; custom or proprietary → demand the spec document first and extract
-requirements from it. Any protocol field without a coverpoint, any invariant without an SVA, and any
+`13_Embedded_Protocols.md`; NoC and interconnect → `14_NoC_Verification.md`; everything else in the
+portfolio — MIPI, automotive TSN, avionics, RISC-V, custom or proprietary → demand the spec document
+first and extract requirements from it per `references/vip-portfolio.md`. Any protocol field without a coverpoint, any invariant without an SVA, and any
 sequence with a hardcoded literal is a `GAP-###` that must be resolved or waived before the gate
 passes.
 
