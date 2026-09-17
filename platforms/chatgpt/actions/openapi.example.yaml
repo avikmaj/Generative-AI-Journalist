@@ -1,0 +1,56 @@
+# Example Custom GPT Action.
+# Optional. Use only if you expose a service that returns live verification or corpus data.
+# Replace the server URL and secure it before use — Custom GPT Actions are callable by the GPT
+# on the user's behalf.
+openapi: 3.1.0
+info:
+  title: Generative AI Journalist companion API
+  description: Read-only lookups over the local corpus and regression database.
+  version: 1.0.0
+servers:
+  - url: https://example.invalid/api
+paths:
+  /corpus/search:
+    get:
+      operationId: searchCorpus
+      summary: Search the normalised OUTSKILL corpus and return matching sections.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Free-text query.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 5
+            maximum: 20
+      responses:
+        "200":
+          description: Matching corpus sections.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        file:
+                          type: string
+                        section:
+                          type: string
+                        excerpt:
+                          type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []

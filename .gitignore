@@ -1,0 +1,30 @@
+# Build output
+dist/
+
+# Ingested course corpus — keep the structure, not the copyrighted material
+knowledge/outskill/raw/
+knowledge/outskill/index.jsonl
+!knowledge/outskill/README.md
+
+# Third-party commercial business e-books and their compilations
+knowledge/business/raw/
+knowledge/business/Business_Management_Bible.md
+knowledge/business/Bible_Part*.md
+!knowledge/business/README.md
+!knowledge/business/LIBRARY.md
+
+# Film bible PDFs are duplicates of the committed Markdown volumes
+knowledge/film/*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

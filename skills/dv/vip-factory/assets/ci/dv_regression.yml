@@ -1,0 +1,272 @@
+# AVIK VIP FACTORY — GitHub Actions CI
+# Item 10: Complete CI pipeline for all VIP regression tiers
+# Path: .github/workflows/dv_regression.yml
+
+name: VIP Factory DV Regression
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'hotfix/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+    inputs:
+      vip:
+        description: 'VIP name (e.g. axi4, apb4)'
+        required: true
+        default: 'axi4'
+      tier:
+        description: 'Regression tier'
+        required: true
+        default: 'L1'
+        type: choice
+        options: [L0, L1, L2, L3, L4, L5]
+      seed_count:
+        description: 'Seeds per test (L3/L4)'
+        required: false
+        default: '10'
+
+env:
+  PYTHON_VERSION: '3.10'
+
+# ──────────────────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── L0: Compile ──────────────────────────────────────────────────────────────
+  L0_compile:
+    name: "L0 — Compile"
+    runs-on: ubuntu-latest
+    outputs:
+      vip: ${{ steps.set_vip.outputs.vip }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set VIP name
+        id: set_vip
+        run: |
+          VIP="${{ github.event.inputs.vip || 'axi4' }}"
+          echo "vip=$VIP" >> $GITHUB_OUTPUT
+          echo "Building VIP: $VIP"
+
+      - name: Install Verilator
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y verilator make
+          verilator --version
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --quiet pyyaml colorama tabulate
+
+      - name: Compile VIP
+        run: |
+          python3 dv_runner/dv_runner.py compile --vip ${{ steps.set_vip.outputs.vip }}
+
+      - name: Upload compile log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compile-log-${{ steps.set_vip.outputs.vip }}
+          path: logs/${{ steps.set_vip.outputs.vip }}_compile.log
+          retention-days: 7
+
+  # ── L1: Smoke ─────────────────────────────────────────────────────────────────
+  L1_smoke:
+    name: "L1 — Smoke"
+    needs: L0_compile
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y verilator
+          pip3 install --quiet pyyaml colorama tabulate
+
+      - name: Compile
+        run: python3 dv_runner/dv_runner.py compile --vip ${{ needs.L0_compile.outputs.vip }}
+
+      - name: Run L1 smoke regression
+        run: |
+          python3 dv_runner/dv_runner.py regress \
+            --vip ${{ needs.L0_compile.outputs.vip }} \
+            --tier L1
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: L1-results-${{ needs.L0_compile.outputs.vip }}
+          path: results/
+          retention-days: 14
+
+      - name: Upload regression DB
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: L1-regdb-${{ needs.L0_compile.outputs.vip }}
+          path: regression_db/
+          retention-days: 30
+
+  # ── L2: Directed Feature Tests ────────────────────────────────────────────────
+  L2_directed:
+    name: "L2 — Directed"
+    needs: L1_smoke
+    if: github.event_name == 'pull_request' || github.event.inputs.tier >= 'L2'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y verilator
+          pip3 install --quiet pyyaml colorama tabulate
+
+      - name: Compile
+        run: python3 dv_runner/dv_runner.py compile --vip ${{ needs.L0_compile.outputs.vip }}
+
+      - name: Run L2 directed regression
+        run: |
+          python3 dv_runner/dv_runner.py regress \
+            --vip ${{ needs.L0_compile.outputs.vip }} \
+            --tier L2
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: L2-results-${{ needs.L0_compile.outputs.vip }}
+          path: results/
+          retention-days: 14
+
+  # ── L3: Random (nightly) ──────────────────────────────────────────────────────
+  L3_random:
+    name: "L3 — Random"
+    needs: L2_directed
+    if: github.event.schedule || github.event.inputs.tier == 'L3'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        seed_batch: [0, 1, 2, 3, 4]   # 5 parallel batches of 20 seeds each
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y verilator
+          pip3 install --quiet pyyaml colorama tabulate
+
+      - name: Compile
+        run: python3 dv_runner/dv_runner.py compile --vip ${{ needs.L0_compile.outputs.vip }}
+
+      - name: Run L3 random batch ${{ matrix.seed_batch }}
+        run: |
+          python3 dv_runner/dv_runner.py regress \
+            --vip ${{ needs.L0_compile.outputs.vip }} \
+            --tier L3 \
+            --batch ${{ matrix.seed_batch }} \
+            --batch_size 20
+
+      - name: Upload batch results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: L3-batch-${{ matrix.seed_batch }}-${{ needs.L0_compile.outputs.vip }}
+          path: results/
+          retention-days: 30
+
+  # ── Summary + Badge ───────────────────────────────────────────────────────────
+  regression_summary:
+    name: "Regression Summary"
+    needs: [L1_smoke, L2_directed]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all results
+        uses: actions/download-artifact@v4
+        with:
+          path: all_results/
+
+      - name: Generate summary report
+        run: |
+          python3 - << 'EOF'
+          import json, os, glob
+          from pathlib import Path
+
+          results = []
+          for f in glob.glob("all_results/**/result.json", recursive=True):
+              with open(f) as fp:
+                  results.append(json.load(fp))
+
+          total   = len(results)
+          passed  = sum(1 for r in results if r.get("status") in ("PASS","EXPECTED_FAILURE_DETECTED"))
+          failed  = sum(1 for r in results if r.get("status") in ("FAIL","UNEXPECTED_PASS"))
+          nv      = sum(1 for r in results if r.get("status") == "NOT_VERIFIED")
+          pct     = round(100*passed/total, 1) if total else 0
+
+          summary = f"""
+          ## VIP Factory Regression Summary
+
+          | Metric | Value |
+          |--------|-------|
+          | Total  | {total} |
+          | PASS   | {passed} ({pct}%) |
+          | FAIL   | {failed} |
+          | NOT_VERIFIED | {nv} |
+          | Status | {'✅ PASS' if failed==0 and nv==0 else '❌ FAIL'} |
+          """
+          print(summary)
+          with open(os.environ.get("GITHUB_STEP_SUMMARY","summary.md"), "w") as f:
+              f.write(summary)
+          EOF
+
+      - name: Fail if any failures
+        run: |
+          python3 - << 'EOF'
+          import json, glob, sys
+          results = []
+          for f in glob.glob("all_results/**/result.json", recursive=True):
+              with open(f) as fp:
+                  results.append(json.load(fp))
+          failures = [r for r in results if r.get("status") not in ("PASS","EXPECTED_FAILURE_DETECTED")]
+          if failures:
+              print(f"FAIL: {len(failures)} failures detected")
+              for f in failures[:10]:
+                  print(f"  {f['test']} seed={f['seed']} status={f['status']}")
+              sys.exit(1)
+          print("PASS: All tests passed")
+          EOF
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Scheduled nightly (L3 random)
+on_schedule:
+  schedule:
+    - cron: '0 22 * * *'   # 10 PM UTC nightly → L3
+  workflow_call:
+    inputs:
+      vip:
+        type: string
+        default: 'axi4'
+      tier:
+        type: string
+        default: 'L3'

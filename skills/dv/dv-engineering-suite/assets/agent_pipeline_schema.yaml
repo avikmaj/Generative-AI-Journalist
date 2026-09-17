@@ -1,0 +1,256 @@
+# ============================================================
+# Agentic DV Pipeline Schema
+# Grounded in: Agentic AI Architecture for Pre-Silicon DV v1.0
+# Deploy MVP agents first (Priority 1-5); others incremental
+# ============================================================
+
+pipeline:
+  name: <project_dv_pipeline>
+  dut: <dut_name>
+  version: "1.0"
+  llm_backend: claude              # claude | gpt-4o | gemini | codellama
+  vector_db: faiss                 # faiss | chromadb | pinecone | milvus
+  ci_backend: jenkins              # jenkins | gitlab_ci | github_actions
+
+  rag_knowledge_base:
+    sources:
+      - type: spec
+        path: <path/to/spec.pdf>
+      - type: vplan
+        path: <path/to/vplan.yaml>
+      - type: regression_logs
+        path: <path/to/logs/>
+      - type: coverage_db
+        path: <path/to/coverage/>
+      - type: bug_db
+        url: <jira_project_url>
+        token_env: JIRA_API_TOKEN
+      - type: confluence
+        url: <space_url>
+        token_env: CONFLUENCE_API_TOKEN
+
+  # --------------------------------------------------------
+  # MVP Priority 1 — Verification Planner Agent
+  # --------------------------------------------------------
+  agents:
+    - id: planner_agent
+      name: Verification Planner
+      priority: 1                  # MVP — deploy first
+      enabled: true
+
+      inputs:
+        - name: spec_text
+          type: string
+          source: rag_knowledge_base
+        - name: feature_list
+          type: list[string]
+          source: user_or_jira
+
+      outputs:
+        - name: vplan_yaml
+          type: yaml
+          schema: assets/vplan_template.yaml
+        - name: traceability_matrix
+          type: csv
+
+      llm_prompt_template: references/agent_arch.md#planner_prompt
+      tool_calls: []
+
+      error_contract:
+        on_empty_spec: "Return partial vplan with UNKNOWN features flagged"
+        on_parse_failure: "Log error; return last valid YAML"
+
+    # --------------------------------------------------------
+    # MVP Priority 2 — Test Generation Agent
+    # --------------------------------------------------------
+    - id: testgen_agent
+      name: Test Generation
+      priority: 2
+      enabled: true
+
+      inputs:
+        - name: coverage_gap_yaml
+          type: yaml
+          source: coverage_analysis_agent
+        - name: existing_sequences
+          type: list[string]
+          source: git_repo
+
+      outputs:
+        - name: uvm_sequence_sv
+          type: systemverilog
+        - name: constraint_additions
+          type: systemverilog
+
+      tool_calls:
+        - compile_check:
+            simulator: VCS
+            flags: "+incdir+$UVM_HOME/src -ntb_opts uvm-1.2"
+
+      error_contract:
+        on_compile_fail: "Return sequence with TODO comment; do not silently generate broken code"
+        on_duplicate_coverage: "Flag as already-covered; skip generation"
+
+    # --------------------------------------------------------
+    # MVP Priority 3 — Regression Analysis Agent
+    # --------------------------------------------------------
+    - id: regression_agent
+      name: Regression Analysis
+      priority: 3
+      enabled: true
+
+      inputs:
+        - name: log_directory
+          type: path
+          source: simulation_control_agent
+        - name: historical_cluster_db
+          type: vector_store
+          source: vector_db
+
+      outputs:
+        - name: cluster_report_yaml
+          type: yaml
+        - name: top_failures_list
+          type: list
+
+      tool_calls:
+        - log_parser:
+            extract: [UVM_ERROR, UVM_FATAL]
+            context_lines: 20
+        - cluster_engine:
+            method: semantic_similarity   # or tfidf
+            min_cluster_size: 5
+
+      error_contract:
+        on_empty_logs: "Return empty cluster report; do not fabricate failures"
+        on_all_pass: "Return green status report"
+
+    # --------------------------------------------------------
+    # MVP Priority 4 — Coverage Closure Agent
+    # --------------------------------------------------------
+    - id: closure_agent
+      name: Coverage Closure
+      priority: 4
+      enabled: true
+
+      inputs:
+        - name: coverage_holes
+          type: yaml
+          source: coverage_analysis_agent
+        - name: existing_constraints
+          type: systemverilog
+          source: git_repo
+
+      outputs:
+        - name: directed_test_sv
+          type: systemverilog
+        - name: constraint_recommendation
+          type: systemverilog
+        - name: waiver_candidates
+          type: yaml
+
+      tool_calls:
+        - urg_parser:
+            report_path: <path/to/urgReport/>
+            extract: [holes, bins, pct]
+
+      error_contract:
+        on_unreachable_hole: "Classify as waiver_candidate; do not generate unreachable test"
+
+    # --------------------------------------------------------
+    # MVP Priority 5 — Debug Intelligence Agent
+    # --------------------------------------------------------
+    - id: debug_agent
+      name: Debug Intelligence
+      priority: 5
+      enabled: true
+
+      inputs:
+        - name: uvm_log_excerpt
+          type: string
+          source: user_or_regression_agent
+        - name: failure_cluster_entry
+          type: yaml
+          source: regression_agent
+
+      outputs:
+        - name: root_cause_ranking
+          type: list[ranked_cause]
+        - name: waveform_search_hints
+          type: list[signal_time_window]
+        - name: grep_commands
+          type: list[string]
+
+      tool_calls:
+        - log_grep:
+            patterns: [UVM_ERROR, UVM_FATAL, protocol_keywords]
+        - verdi_tcl_generator:
+            output: debug_waves.tcl
+
+      error_contract:
+        on_no_error_in_log: "Return 'no UVM errors found'; suggest checking sim exit code"
+        on_unknown_protocol: "Return generic AXI/AHB debug checklist"
+
+    # --------------------------------------------------------
+    # Incremental — add after MVP is stable
+    # --------------------------------------------------------
+    - id: waveform_agent
+      name: Waveform Analysis
+      priority: 6
+      enabled: false               # enable after MVP
+
+    - id: scoreboard_agent
+      name: Scoreboard Intelligence
+      priority: 7
+      enabled: false
+
+    - id: noc_traffic_agent
+      name: NoC Traffic Optimization
+      priority: 8
+      enabled: false
+
+    - id: dashboard_agent
+      name: DV Dashboard
+      priority: 9
+      enabled: false
+
+  # --------------------------------------------------------
+  # Inter-Agent Data Flow
+  # --------------------------------------------------------
+  data_flow:
+    - from: planner_agent
+      to: testgen_agent
+      artifact: vplan_yaml
+
+    - from: testgen_agent
+      to: simulation_control
+      artifact: uvm_sequence_sv
+
+    - from: simulation_control
+      to: regression_agent
+      artifact: log_directory
+
+    - from: regression_agent
+      to: debug_agent
+      artifact: cluster_report_yaml
+
+    - from: debug_agent
+      to: coverage_analysis_agent
+      artifact: root_cause_ranking
+
+    - from: coverage_analysis_agent
+      to: closure_agent
+      artifact: coverage_holes
+
+    - from: closure_agent
+      to: simulation_control
+      artifact: directed_test_sv
+
+  # --------------------------------------------------------
+  # Audit Logging — required for DV evidence traceability
+  # --------------------------------------------------------
+  audit_log:
+    enabled: true
+    path: <path/to/agent_audit.log>
+    fields: [timestamp, agent_id, input_hash, output_hash, tool_calls, status]
+    retention_days: 90

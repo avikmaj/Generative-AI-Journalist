@@ -1,0 +1,199 @@
+# ============================================================
+# Signoff Evidence Package Template
+# DV Engineering Bible Vol I — Chapter 47
+# Complete all sections before Review Board
+# ============================================================
+
+signoff_package:
+  dut: <dut_name>
+  version: <rtl_tag>
+  author: <dv_lead_name>
+  date: <YYYY-MM-DD>
+  milestone: 1.0                          # 0.3 | 0.5 | 0.8 | 1.0
+  board_decision: pending                 # pending | approved | approved_with_conditions | rejected
+
+  # --------------------------------------------------------
+  # 1. Requirements Traceability Matrix
+  # --------------------------------------------------------
+  requirements_traceability:
+    status: IN_PROGRESS                   # COMPLETE | IN_PROGRESS
+    total_requirements: 0
+    pass_count: 0
+    waived_count: 0
+    open_count: 0
+    matrix_location: <path/to/RTM.xlsx>
+    # Entries format:
+    # requirements:
+    #   - id: R001
+    #     description: <text>
+    #     scenarios: [F001_S01, F001_S02]
+    #     coverpoints: [axi_len_cg.len_bins]
+    #     status: PASS | WAIVED | OPEN
+    #     waiver_ref: W001                # if waived
+
+  # --------------------------------------------------------
+  # 2. Functional Coverage
+  # --------------------------------------------------------
+  functional_coverage:
+    status: IN_PROGRESS
+    overall_pct: 0.0
+    target_pct: 95.0
+    holes_open: 0
+    holes_waived: 0
+    report_location: <path/to/urg_report/>
+    covergroups: []
+    # covergroups entry:
+    # - name: axi_write_cg
+    #   pct: 97.3
+    #   holes: 2
+    #   waived: 1
+
+  # --------------------------------------------------------
+  # 3. Code Coverage
+  # --------------------------------------------------------
+  code_coverage:
+    status: IN_PROGRESS
+    report_location: <path/to/cm_report/>
+    metrics:
+      statement_pct: 0.0   # target ≥ 90
+      branch_pct:    0.0   # target ≥ 85
+      condition_pct: 0.0   # target ≥ 80
+      toggle_pct:    0.0   # target ≥ 75
+      fsm_state_pct: 0.0   # target ≥ 90
+      fsm_trans_pct: 0.0   # target ≥ 80
+    exclusions_documented: false
+    exclusion_file: <path/to/cm_exclusions.el>
+
+  # --------------------------------------------------------
+  # 4. Assertion Summary
+  # --------------------------------------------------------
+  assertions:
+    status: IN_PROGRESS
+    total: 0
+    exercised: 0           # antecedent triggered ≥1 time
+    vacuous: 0             # must be individually reviewed and dispositioned
+    disabled: 0            # must be reviewed; none allowed at signoff without waiver
+    formally_proven: 0
+    fired_bugs_found: 0
+    vacuous_review_complete: false
+    disabled_review_complete: false
+
+  # --------------------------------------------------------
+  # 5. Regression Summary (minimum 5 consecutive runs)
+  # --------------------------------------------------------
+  regression:
+    status: IN_PROGRESS
+    runs:
+      - run_id: 1
+        date: <YYYY-MM-DD>
+        total_tests: 0
+        pass: 0
+        fail: 0
+        pass_pct: 0.0
+        flaky: 0
+      - run_id: 2
+        date: <YYYY-MM-DD>
+        total_tests: 0
+        pass: 0
+        fail: 0
+        pass_pct: 0.0
+        flaky: 0
+      # ... (5 total)
+    average_pass_pct: 0.0          # target ≥ 99
+    average_flaky_pct: 0.0         # target < 1
+    open_deterministic_failures: 0 # must be 0 for signoff
+
+  # --------------------------------------------------------
+  # 6. Bug Summary
+  # --------------------------------------------------------
+  bugs:
+    p0_open: 0             # must be 0 for signoff — no exceptions
+    p1_open: 0             # each needs documented disposition
+    p2_open: 0
+    total_closed: 0
+    escape_count: 0        # bugs found post-milestone
+    mttd_days: 0.0
+    mttr_days: 0.0
+    open_p1_disposition: []
+    # - id: BUG-001
+    #   summary: <text>
+    #   disposition: deferred_to_next_rev | accepted_risk | workaround
+    #   waiver_ref: W002
+    #   approver: <name>
+
+  # --------------------------------------------------------
+  # 7. Performance Results
+  # --------------------------------------------------------
+  performance:
+    status: IN_PROGRESS
+    workload: <description of representative traffic mix>
+    metrics:
+      latency_avg_ns: 0.0
+      latency_worst_ns: 0.0
+      latency_target_ns: 0.0       # from arch spec
+      bandwidth_gbps: 0.0
+      bandwidth_target_gbps: 0.0
+      throughput_tps: 0
+      throughput_target_tps: 0
+      qos_compliance_pct: 0.0
+    targets_met: false
+
+  # --------------------------------------------------------
+  # 8. Risk Register
+  # --------------------------------------------------------
+  risk_register:
+    total_open: 0
+    residuals_accepted: false
+    risks: []
+    # - id: RISK-001
+    #   description: <text>
+    #   probability: LOW | MED | HIGH
+    #   impact: LOW | MED | HIGH
+    #   mitigation: <text>
+    #   residual_risk: ACCEPTED | OPEN
+    #   owner: <name>
+    #   date_accepted: <YYYY-MM-DD>
+
+  # --------------------------------------------------------
+  # 9. Waiver Log
+  # --------------------------------------------------------
+  waiver_log:
+    total: 0
+    waivers: []
+    # - id: W001
+    #   type: coverage | assertion | bug | exclusion
+    #   item: <coverpoint or assertion name>
+    #   justification: <text>
+    #   approver: <name>
+    #   date: <YYYY-MM-DD>
+
+  # --------------------------------------------------------
+  # 10. Review Board
+  # --------------------------------------------------------
+  review_board:
+    scheduled_date: <YYYY-MM-DD>
+    participants:
+      - role: DV Lead
+        name: Avik Majumdar
+      - role: RTL Lead
+        name: <name>
+      - role: Design Architect
+        name: <name>
+      - role: DFT Lead
+        name: <name>
+      - role: Program Manager
+        name: <name>
+      - role: Quality Representative
+        name: <name>
+    agenda:
+      1_requirements: "All reqs verified or waived with justification"
+      2_coverage: "Targets achieved; gaps classified and accepted"
+      3_regression: "Stable; failures resolved or accepted"
+      4_assertions: "Passing; vacuous reviewed"
+      5_bugs: "Critical resolved; residuals accepted"
+      6_performance: "Targets met"
+      7_risk: "Register reviewed; residuals accepted"
+      8_decision: "approved | approved_with_conditions | not_approved"
+    decision: pending
+    conditions: []
+    minutes_location: <path/to/review_board_minutes.docx>

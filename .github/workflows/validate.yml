@@ -1,0 +1,41 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  skills:
+    name: Validate skill packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate skills
+        run: python3 scripts/validate_skills.py
+
+      - name: Check no licensed corpus was committed
+        run: |
+          set -e
+          fail=0
+          for path in \
+            knowledge/outskill/raw \
+            knowledge/outskill/index.jsonl \
+            knowledge/business/raw \
+            knowledge/business/Business_Management_Bible.md
+          do
+            if git ls-files --error-unmatch "$path" > /dev/null 2>&1; then
+              echo "ERROR licensed material is tracked: $path"
+              fail=1
+            fi
+          done
+          exit $fail

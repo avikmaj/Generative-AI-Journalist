@@ -1,0 +1,123 @@
+# ============================================================
+# Verification Plan (Vplan) Template
+# DV Engineering Bible Vol I — Chapter 11
+# Replace all <placeholder> values before use
+# ============================================================
+
+vplan:
+  dut: <dut_name>                  # e.g. axi_bridge, usb_ctrl, noc_fabric
+  rtl_version: <tag_or_sha>
+  author: <name>
+  date: <YYYY-MM-DD>
+  simulator: VCS                   # VCS | Xcelium | Questa
+  uvm_version: 1.2                 # 1.1d | 1.2
+  protocols: []                    # e.g. [AXI4, AHB5, APB4, CHI-B, USB3]
+
+  coverage_targets:
+    functional_pct: 95
+    code_stmt_pct: 90
+    code_branch_pct: 85
+    toggle_pct: 75
+    assertion_exercised_pct: 95
+
+  milestones:
+    env_ready: <YYYY-MM-DD>        # Milestone 0.3
+    feature_complete: <YYYY-MM-DD> # Milestone 0.5
+    coverage_closure: <YYYY-MM-DD> # Milestone 0.8
+    signoff: <YYYY-MM-DD>          # Milestone 1.0
+
+  # --------------------------------------------------------
+  # Feature entries — one block per DUT feature
+  # --------------------------------------------------------
+  features:
+
+    - id: F001
+      name: <feature_name>                  # e.g. AXI Write Channel
+      priority: P0                          # P0 | P1 | P2
+      spec_ref: <section_or_page>           # e.g. Sec 3.2, p.47
+      description: <one-line description>
+      risk: medium                          # low | medium | high
+      estimated_regression_tests: 200
+      dependencies: []                      # [F002, F005, ...]
+
+      scenarios:
+        - id: F001_S01
+          name: <scenario_name>             # e.g. Legal_Write_Burst_Incr
+          stimulus_type: constrained_random # constrained_random | directed | formal
+          description: <one-line>
+          priority: P0
+
+          coverage:
+            - covergroup: <cg_name>         # e.g. axi_write_cg
+              coverpoint: <cp_name>         # e.g. awlen_cp
+              bin: <bin_name_or_condition>  # e.g. len_255, wrap_64b
+
+          assertions:
+            - <sva_property_name>           # e.g. p_awvalid_stable
+
+          expected_bug_density: low         # low | medium | high
+          notes: ""
+
+        - id: F001_S02
+          name: <scenario_name>
+          stimulus_type: directed
+          description: <one-line>
+          priority: P1
+
+          coverage:
+            - covergroup: <cg_name>
+              coverpoint: <cp_name>
+              bin: <bin_name>
+
+          assertions: []
+          expected_bug_density: medium
+          notes: ""
+
+    # --------------------------------------------------------
+    # Negative / Error scenarios — separate feature recommended
+    # --------------------------------------------------------
+    - id: F002
+      name: Error_Injection
+      priority: P1
+      spec_ref: <section>
+      description: Protocol violation and error recovery scenarios
+      risk: medium
+      estimated_regression_tests: 50
+      dependencies: [F001]
+
+      scenarios:
+        - id: F002_S01
+          name: Illegal_Burst_Type
+          stimulus_type: directed
+          description: Assert unsupported AWBURST value; verify DUT SLVERR response
+          priority: P1
+          coverage:
+            - covergroup: axi_err_cg
+              coverpoint: slverr_cp
+              bin: illegal_burst
+          assertions:
+            - p_slverr_on_illegal_burst
+          expected_bug_density: high
+          notes: Check DUT clamps or errors — spec-dependent
+
+  # --------------------------------------------------------
+  # Waiver pre-identification
+  # (to be finalized at signoff — listed here for planning)
+  # --------------------------------------------------------
+  waiver_candidates:
+    - item: <coverpoint_name>
+      reason: unreachable | dont_care | DFT | tie_off | dead_code
+      justification: <text>
+      approver_required: <name>
+
+  # --------------------------------------------------------
+  # Regression plan
+  # --------------------------------------------------------
+  regression:
+    total_estimated_tests: 0        # sum across all scenarios × seed_count
+    seed_count_per_test: 10
+    farm: LSF                       # LSF | Slurm | VMS | local
+    parallel_jobs: 100
+    coverage_merge: true
+    nightly: true
+    incremental_on_rtl_change: true
