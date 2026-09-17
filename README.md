@@ -66,6 +66,8 @@ python3 scripts/validate_skills.py
 Then follow [docs/02-setup-claude.md](docs/02-setup-claude.md),
 [docs/03-setup-chatgpt.md](docs/03-setup-chatgpt.md) and
 [docs/04-setup-grok.md](docs/04-setup-grok.md).
+For a single copy-paste checklist covering all three platforms, project names, objectives, exact
+upload lists and test prompts, see [docs/08-project-setup.md](docs/08-project-setup.md).
 
 ## Skill index
 
