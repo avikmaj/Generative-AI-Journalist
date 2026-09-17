@@ -1,5 +1,60 @@
 # Changelog
 
+## 1.1.0
+
+Four families, three platforms, and the tooling to build them.
+
+### Added — skill families
+
+- `skills/dv/vip-factory` — the VIP delivery layer from the vip-factory-suite archive: gates 0-11,
+  tiers L0-L5, PASS authority policy, regression and simulator policy, UVM skeleton and TB infra
+  assets, CI workflow, `dv_runner.py`. Protocol-agnostic by design.
+- `skills/business/business-management` — hub plus 10 references from the Business Management Bible.
+- `skills/film/ai-movie-studio` — hub plus 60 modules from AI-Movie-Studio.
+
+### Added — tooling
+
+- `scripts/_bundle_lib.py` — shared skill discovery, frontmatter parsing, flattening and splitting
+  for all three builders.
+- `scripts/build_claude_bundle.py`, `build_chatgpt_bundle.py`, `build_grok_bundle.py` — the three
+  platform renderers. ChatGPT and Grok get a router generated from the files actually written.
+- `scripts/ingest_outskill.py` — corpus ingest to `knowledge/outskill/index.jsonl`, classifying by
+  book 1-6 and by source tier with a precedence field so the reconciled notes win on conflict.
+- `scripts/check_golden_set.py` — golden-set schema and cross-reference validation.
+
+### Added — content
+
+- `prompts/` — 11 reusable task prompts across all four families, each naming its expected skill and
+  output contract.
+- `evals/golden-set.jsonl` — 22 cases covering cross-family routing collisions, grounding, sign-off
+  integrity and licensing boundaries.
+- `evals/rubric.md` — 13 scored dimensions, case score as the minimum not the mean, explicit release
+  gate with four blocking dimensions.
+- `platforms/grok/project-instructions.md` and `docs/04-setup-grok.md` — Grok reaches parity.
+- `docs/07-platform-parity.md` — capability matrix, mitigations, and the invariants that must never
+  differ between platforms.
+
+### Changed
+
+- `model/MODEL_CARD.md` — four modes (`[DV]`, `[GENAI]`, `[BIZ]`, `[FILM]`, plus `[BOTH]`), a
+  cross-family disambiguation table, and a rule that unknowns are never laundered into a pass.
+- `platforms/claude/project-instructions.md`, `platforms/chatgpt/system-prompt.md` — rebuilt around
+  the real 14-skill router. The previous ChatGPT router listed 10 skills that no longer existed under
+  those names.
+- `docs/00-overview.md` — four families; repaired stale links to `04-authoring-skills.md` and
+  `05-evaluation.md`, which had been renumbered to 05 and 06.
+- `docs/01-architecture.md` — three platforms, the hub-versus-independent-skills rule, and the
+  validator's actual rules including the mandatory negative guard clause.
+- `README.md` — repaired the dangling `docs/04-setup-grok.md` link, which pointed at a file that did
+  not exist.
+
+### Repairs applied
+
+- `evals/golden-set.jsonl` case `route-003` claimed `visual-storytelling-director` was in the `film`
+  family; it is in `genai`. Caught by `check_golden_set.py` on its first run.
+- The Claude builder resolves git-ignored paths via `git ls-files --ignored` rather than a hardcoded
+  deny-list, so a newly added licensed corpus cannot leak into a bundle by omission.
+
 ## 1.0.0
 
 Initial system.

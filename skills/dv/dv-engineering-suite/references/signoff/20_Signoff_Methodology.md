@@ -1,7 +1,7 @@
 # Module 20 — Signoff Methodology
 ## Evidence Package · Milestone Gates · Risk Register · Review Board
 
-For agent coordination, use the [SUPER-BRAIN DV operating contract](../../agentic_ai_dv_architecture.md). REVIEW_AGENT evaluates the exact requirement, RTL, DV, tool, and configuration snapshot and may return work to the appropriate loop. A review of bug reproduction or documentation does not permit design advancement or signoff. Changes invalidate affected results and reviews until rerun and independently checked. The orchestrator records readiness; final signoff and waiver acceptance belong to the project's human engineering authority.
+For agent coordination, use the SUPER-BRAIN DV operating contract (`knowledge/dv/agentic_ai_dv_architecture.md` in the repository; not bundled inside this skill). REVIEW_AGENT evaluates the exact requirement, RTL, DV, tool, and configuration snapshot and may return work to the appropriate loop. A review of bug reproduction or documentation does not permit design advancement or signoff. Changes invalidate affected results and reviews until rerun and independently checked. The orchestrator records readiness; final signoff and waiver acceptance belong to the project's human engineering authority.
 
 The numeric targets and populated status fields below are illustrative planning templates, not measured project results or universal acceptance criteria. Set project-specific targets from the approved verification plan. Use null with NOT_MEASURED or NOT_RUN for unavailable evidence; never initialize a live project's unknown metrics as zero or COMPLETE.
 

@@ -23,6 +23,30 @@ jobs:
       - name: Validate skills
         run: python3 scripts/validate_skills.py
 
+      - name: Validate golden set
+        run: python3 scripts/check_golden_set.py
+
+      - name: Build all three platform bundles
+        run: |
+          python3 scripts/build_claude_bundle.py
+          python3 scripts/build_chatgpt_bundle.py
+          python3 scripts/build_grok_bundle.py
+
+      - name: Check no licensed material reached a bundle
+        run: |
+          set -e
+          if find dist -name "*.pdf" | grep -q .; then
+            echo "ERROR a PDF reached dist/ - licensed corpora must never be bundled"
+            exit 1
+          fi
+          for pattern in "outskill/raw" "business/raw" "index.jsonl" "Business_Management_Bible"; do
+            if find dist -path "*$pattern*" | grep -q .; then
+              echo "ERROR licensed material reached dist/: $pattern"
+              exit 1
+            fi
+          done
+          echo "bundles are clean"
+
       - name: Check no licensed corpus was committed
         run: |
           set -e
