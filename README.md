@@ -70,6 +70,8 @@ For a single copy-paste checklist covering all three platforms, project names, o
 upload lists and test prompts, see [docs/08-project-setup.md](docs/08-project-setup.md).
 To work through the uploads step by step, use
 [docs/09-upload-checklist.md](docs/09-upload-checklist.md).
+To read corpora straight from this repo instead of uploading copies, see
+[docs/10-github-direct-access.md](docs/10-github-direct-access.md).
 
 ## Skill index
 
