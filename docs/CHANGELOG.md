@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.1.1
+
+Limit-safe platform packaging.
+
+### Changed
+
+- Capped every built instruction file below 4,000 characters; builders now fail if the limit is
+  crossed.
+- Consolidated ChatGPT from 19 recommended uploads to five: four family files plus `CONTROL.md`.
+- Consolidated Grok from seven uploads to the same five-file layout; governing VIP rules now live in
+  `CONTROL.md`.
+- Kept Claude at 14 native Agent Skill zips with no markdown upload requirement; reference corpora
+  are selected through the authenticated GitHub integration.
+- Replaced conflicting setup documents with one canonical five-field setup card for each platform.
+
 ## 1.1.0
 
 Four families, three platforms, and the tooling to build them.

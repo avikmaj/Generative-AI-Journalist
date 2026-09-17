@@ -135,6 +135,27 @@ def skill_index_table(skills: list[Skill], filename_for) -> str:
     return "\n".join(rows)
 
 
+def compact_skill_router(skills: list[Skill], filename_for) -> str:
+    """Compact router for instruction fields with tight character limits."""
+    lines = ["## Skill router", "", "Format: `skill → file — triggers`.", ""]
+    for s in skills:
+        lines.append(f"- `{s.name}` → `{filename_for(s)}` — {trigger_of(s, 72)}")
+    return "\n".join(lines)
+
+
+def family_bundle(family: str, skills: list[Skill]) -> str:
+    """Consolidate all flattened skills in one family into one upload."""
+    members = [s for s in skills if s.family == family]
+    sections = [
+        f"# {family.upper()} family — consolidated skills\n",
+        f"Contains {len(members)} skill(s). Jump to a `# Skill:` heading after routing.\n",
+    ]
+    for skill in members:
+        for _, content in flatten(skill):
+            sections.append("\n\n---\n\n" + content)
+    return "".join(sections)
+
+
 def trigger_of(skill: Skill, limit: int = 170) -> str:
     """The 'when to load' half of a description, cleaned for a table cell.
 

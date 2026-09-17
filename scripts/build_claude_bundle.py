@@ -13,6 +13,8 @@ from pathlib import Path
 
 from _bundle_lib import ROOT, discover_skills, report, reset_dist, write
 
+MAX_INSTRUCTION_CHARS = 4_000
+
 
 def main() -> int:
     skills = discover_skills()
@@ -25,7 +27,14 @@ def main() -> int:
     # 1. Project instructions — pasted into the Claude Project's instructions box.
     src = ROOT / "platforms" / "claude" / "project-instructions.md"
     if src.exists():
-        write(target / "project-instructions.md", src.read_text(encoding="utf-8"))
+        instructions = src.read_text(encoding="utf-8")
+        if len(instructions) > MAX_INSTRUCTION_CHARS:
+            print(
+                f"Claude instructions exceed {MAX_INSTRUCTION_CHARS}: {len(instructions)}",
+                file=sys.stderr,
+            )
+            return 2
+        write(target / "project-instructions.md", instructions)
 
     claude_md = ROOT / "platforms" / "claude" / "CLAUDE.md"
     if claude_md.exists():

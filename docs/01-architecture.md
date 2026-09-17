@@ -22,7 +22,7 @@ artifacts.
         ▼                      ▼                      ▼
   dist/claude/           dist/chatgpt/          dist/grok/
    ├ project-instructions  ├ system-prompt.md     ├ project-instructions.md
-   ├ CLAUDE.md             ├ SKILL_<fam>_<name>   ├ GROK_KNOWLEDGE_<FAMILY>.md
+   ├ CLAUDE.md             ├ FAMILY_<FAMILY>.md   ├ FAMILY_<FAMILY>.md
    ├ skills/<name>/ (+refs)│   (flattened, split) ├ dv-vip-factory-team-rules.md
    ├ knowledge/            ├ KNOWLEDGE_<FAM>.md   ├ MODEL_CARD.md, PROMPTS.md
    └ MANIFEST.md           └ MODEL_CARD, PROMPTS, └ MANIFEST.md
