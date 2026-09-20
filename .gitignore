@@ -28,3 +28,7 @@ venv/
 .idea/
 .DS_Store
 Thumbs.db
+
+# employee runtime config — never commit real values
+employees/.env
+employees/*/.env
