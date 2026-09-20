@@ -1,0 +1,754 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/employees/meridian/schema/output.json",
+  "title": "MERIDIAN research note",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "employee",
+    "spec_version",
+    "run_id",
+    "artifact_date",
+    "issuer",
+    "status",
+    "disclaimer",
+    "financial_position",
+    "unit_economics",
+    "moat",
+    "valuation",
+    "market",
+    "catalysts",
+    "thesis_breakers",
+    "evidence_log",
+    "adversarial_record",
+    "gaps",
+    "confidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "employee": {
+      "const": "meridian"
+    },
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "artifact_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "escalated"
+      ]
+    },
+    "disclaimer": {
+      "const": "This is analysis, not investment advice. MERIDIAN does not place, recommend, or simulate trades."
+    },
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "legal_name",
+        "ticker",
+        "exchange"
+      ],
+      "properties": {
+        "legal_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ticker": {
+          "type": "string",
+          "pattern": "^[A-Z0-9.\\-]{1,16}$"
+        },
+        "exchange": {
+          "type": "string",
+          "minLength": 1
+        },
+        "registry_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "financial_position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "figures",
+        "ratios",
+        "trend",
+        "red_flags"
+      ],
+      "properties": {
+        "figures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/figure"
+          }
+        },
+        "ratios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/figure"
+          }
+        },
+        "trend": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "periods_compared",
+            "direction",
+            "evidence_ids"
+          ],
+          "properties": {
+            "periods_compared": {
+              "type": "integer",
+              "minimum": 3
+            },
+            "direction": {
+              "enum": [
+                "improving",
+                "flat",
+                "deteriorating"
+              ]
+            },
+            "evidence_ids": {
+              "$ref": "#/$defs/evidence_ids"
+            }
+          }
+        },
+        "red_flags": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "statement",
+              "evidence_ids"
+            ],
+            "properties": {
+              "statement": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_ids": {
+                "$ref": "#/$defs/evidence_ids"
+              }
+            }
+          }
+        }
+      }
+    },
+    "unit_economics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metrics",
+        "scalability_verdict"
+      ],
+      "properties": {
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/figure"
+          }
+        },
+        "scalability_verdict": {
+          "enum": [
+            "improving",
+            "flat",
+            "deteriorating",
+            "insufficient_evidence"
+          ]
+        }
+      }
+    },
+    "moat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "durability",
+        "capital_discipline"
+      ],
+      "properties": {
+        "durability": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "statement",
+              "evidence_ids"
+            ],
+            "properties": {
+              "statement": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_ids": {
+                "$ref": "#/$defs/evidence_ids"
+              }
+            }
+          }
+        },
+        "capital_discipline": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "statement",
+              "evidence_ids"
+            ],
+            "properties": {
+              "statement": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_ids": {
+                "$ref": "#/$defs/evidence_ids"
+              }
+            }
+          }
+        }
+      }
+    },
+    "valuation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "range",
+        "drivers"
+      ],
+      "properties": {
+        "method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "low",
+            "high",
+            "unit",
+            "currency"
+          ],
+          "properties": {
+            "low": {
+              "type": "number"
+            },
+            "high": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            }
+          }
+        },
+        "drivers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "evidence_ids"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_ids": {
+                "$ref": "#/$defs/evidence_ids"
+              }
+            }
+          }
+        }
+      }
+    },
+    "market": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tam",
+        "sam",
+        "som",
+        "competitive_set"
+      ],
+      "properties": {
+        "tam": {
+          "$ref": "#/$defs/market_size"
+        },
+        "sam": {
+          "$ref": "#/$defs/market_size"
+        },
+        "som": {
+          "$ref": "#/$defs/market_size"
+        },
+        "competitive_set": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "evidence_ids"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_ids": {
+                "$ref": "#/$defs/evidence_ids"
+              }
+            }
+          }
+        }
+      }
+    },
+    "catalysts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dated_item"
+      }
+    },
+    "thesis_breakers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dated_item"
+      }
+    },
+    "evidence_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "claim",
+          "source",
+          "published_at",
+          "grade",
+          "verdict",
+          "is_stale",
+          "injection_attempt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^E[0-9]{3}$"
+          },
+          "claim": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "format": "uri"
+          },
+          "published_at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "grade": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D"
+            ]
+          },
+          "verdict": {
+            "enum": [
+              "used",
+              "superseded",
+              "conflicted",
+              "rejected"
+            ]
+          },
+          "is_stale": {
+            "type": "boolean"
+          },
+          "injection_attempt": {
+            "type": "boolean"
+          },
+          "injection_excerpt": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "injection_attempt": {
+                  "const": true
+                }
+              },
+              "required": [
+                "injection_attempt"
+              ]
+            },
+            "then": {
+              "required": [
+                "injection_excerpt"
+              ],
+              "properties": {
+                "grade": {
+                  "const": "D"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "adversarial_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempts_detected",
+        "verdict_unaffected",
+        "attempts"
+      ],
+      "properties": {
+        "attempts_detected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "verdict_unaffected": {
+          "const": true,
+          "description": "Pinned. An artifact asserting an injection changed the verdict is structurally invalid and cannot be written."
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "evidence_id",
+              "excerpt",
+              "action_taken"
+            ],
+            "properties": {
+              "evidence_id": {
+                "type": "string",
+                "pattern": "^E[0-9]{3}$"
+              },
+              "excerpt": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "action_taken": {
+                "const": "logged as sourced content, source regraded D, instruction not executed, verdict unchanged"
+              }
+            }
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field",
+          "reason"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "enum": [
+              "no_dated_source",
+              "retrieval_failed",
+              "conflicted_unresolved",
+              "currency_unnormalisable",
+              "fiscal_period_unnormalisable",
+              "insufficient_periods",
+              "method_inputs_unavailable",
+              "sensitive_data_redacted"
+            ]
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overall",
+        "basis",
+        "material_figure_count",
+        "unsourced_figure_count",
+        "unsourced_fraction",
+        "penalties_applied"
+      ],
+      "properties": {
+        "overall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "material_figure_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unsourced_figure_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unsourced_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "penalties_applied": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "amount"
+            ],
+            "properties": {
+              "name": {
+                "enum": [
+                  "unsourced",
+                  "conflict",
+                  "stale",
+                  "low_grade",
+                  "thin_evidence",
+                  "injection"
+                ]
+              },
+              "amount": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "evidence_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^E[0-9]{3}$"
+      }
+    },
+    "figure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "state",
+        "evidence_ids"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "enum": [
+            "sourced",
+            "conflicted"
+          ]
+        },
+        "value": {
+          "type": "number"
+        },
+        "values": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "evidence_id"
+            ],
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "evidence_id": {
+                "type": "string",
+                "pattern": "^E[0-9]{3}$"
+              }
+            }
+          }
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "fiscal_period": {
+          "type": "string",
+          "minLength": 1
+        },
+        "is_stale": {
+          "type": "boolean"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidence_ids"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "sourced"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "required": [
+              "value",
+              "unit",
+              "fiscal_period",
+              "is_stale"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "conflicted"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "required": [
+              "values"
+            ],
+            "not": {
+              "required": [
+                "value"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "market_size": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit",
+        "currency",
+        "method",
+        "evidence_ids"
+      ],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "method": {
+          "enum": [
+            "top_down",
+            "bottom_up",
+            "issuer_published",
+            "analyst_published"
+          ]
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidence_ids"
+        }
+      }
+    },
+    "dated_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "statement",
+        "expected_or_observed_at",
+        "evidence_ids"
+      ],
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_or_observed_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidence_ids"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+name: employees
+
+on:
+  push:
+    paths: ["employees/**", "scripts/validate_employees.py", "scripts/extract_employee_schemas.py"]
+  pull_request:
+    paths: ["employees/**", "scripts/validate_employees.py", "scripts/extract_employee_schemas.py"]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Specifications conform to the fourteen-section contract
+        run: python scripts/validate_employees.py
+
+      - name: Extracted schemas match their specifications
+        run: python scripts/extract_employee_schemas.py --check

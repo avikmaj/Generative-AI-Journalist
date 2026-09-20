@@ -1,0 +1,644 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "employees/genesis/schema/output.json",
+  "title": "GENESIS production lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "aspect_ratio_source",
+    "assumptions",
+    "characters",
+    "confidence",
+    "dedupe_key",
+    "employee",
+    "format",
+    "format_source",
+    "gaps",
+    "generation_scope",
+    "injection_attempts",
+    "lock_version",
+    "locked_at",
+    "logline",
+    "premise_sha256",
+    "prompt_sha",
+    "run_id",
+    "slug",
+    "status",
+    "structure",
+    "style",
+    "version",
+    "world"
+  ],
+  "properties": {
+    "employee": {
+      "const": "genesis"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "prompt_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 64
+    },
+    "premise_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "dedupe_key": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}::[a-z0-9-]+$"
+    },
+    "format": {
+      "type": "string",
+      "minLength": 3
+    },
+    "format_source": {
+      "enum": [
+        "run_parameter",
+        "default"
+      ]
+    },
+    "aspect_ratio_source": {
+      "const": "format"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "escalated"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "lock_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "locked_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "generation_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clips_generated",
+        "usd_generation_spent",
+        "shot_list_produced"
+      ],
+      "properties": {
+        "clips_generated": {
+          "const": 0
+        },
+        "usd_generation_spent": {
+          "const": 0
+        },
+        "shot_list_produced": {
+          "const": false
+        }
+      }
+    },
+    "logline": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 500
+    },
+    "structure": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sequence",
+          "beat",
+          "purpose",
+          "est_clips",
+          "location"
+        ],
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "beat": {
+            "type": "string",
+            "minLength": 10
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 10
+          },
+          "est_clips": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "characters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "identity_token",
+          "identity_token_descriptor_count",
+          "wardrobe_by_sequence",
+          "continuity_notes"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "identity_token": {
+            "type": "string",
+            "minLength": 40,
+            "maxLength": 240
+          },
+          "identity_token_descriptor_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "wardrobe_by_sequence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sequence",
+                "garment",
+                "colour",
+                "state"
+              ],
+              "properties": {
+                "sequence": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "garment": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "colour": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "state": {
+                  "enum": [
+                    "clean",
+                    "soiled",
+                    "torn",
+                    "wet",
+                    "bloodied"
+                  ]
+                }
+              }
+            }
+          },
+          "continuity_notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "note",
+                "sequence"
+              ],
+              "properties": {
+                "note": {
+                  "type": "string",
+                  "minLength": 5
+                },
+                "sequence": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "world": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "locations",
+        "rules"
+      ],
+      "properties": {
+        "locations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "description",
+              "time_of_day",
+              "constraints"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string",
+                "minLength": 20
+              },
+              "time_of_day": {
+                "type": "string",
+                "minLength": 1
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "rules": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "rule_id",
+              "statement"
+            ],
+            "properties": {
+              "rule_id": {
+                "type": "string",
+                "pattern": "^WR-\\d{3}$"
+              },
+              "statement": {
+                "type": "string",
+                "minLength": 10
+              }
+            }
+          }
+        }
+      }
+    },
+    "consistency_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding_id",
+          "kind",
+          "side_a",
+          "side_b",
+          "detail"
+        ],
+        "properties": {
+          "finding_id": {
+            "type": "string",
+            "pattern": "^CF-\\d{3}$"
+          },
+          "kind": {
+            "enum": [
+              "contradiction",
+              "undetermined"
+            ]
+          },
+          "side_a": {
+            "type": "string",
+            "minLength": 1
+          },
+          "side_b": {
+            "type": "string",
+            "minLength": 1
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "palette",
+        "grade",
+        "lens_language",
+        "aspect_ratios"
+      ],
+      "properties": {
+        "palette": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        },
+        "grade": {
+          "type": "string",
+          "minLength": 20
+        },
+        "lens_language": {
+          "type": "string",
+          "minLength": 20
+        },
+        "aspect_ratios": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^\\d+:\\d+$"
+          }
+        }
+      }
+    },
+    "shooting_order": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sequence",
+          "rationale",
+          "location",
+          "est_clips"
+        ],
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 10
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1
+          },
+          "est_clips": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "shooting_order_est_clips_total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "location_splits": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lock_diff": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "from",
+          "to"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from": {},
+          "to": {}
+        }
+      }
+    },
+    "orphan_analysis": {
+      "enum": [
+        "complete",
+        "unknown",
+        "not_applicable"
+      ]
+    },
+    "orphan_analysis_note": {
+      "type": "string"
+    },
+    "orphaned_clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "clip_id",
+          "reason",
+          "diff_path"
+        ],
+        "properties": {
+          "clip_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 5
+          },
+          "diff_path": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "injection_attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source",
+          "excerpt",
+          "classification",
+          "verdict_unaffected"
+        ],
+        "properties": {
+          "source": {
+            "enum": [
+              "premise",
+              "series_bible",
+              "clip_manifest",
+              "character_bible_ref",
+              "environment_bible_ref",
+              "style_guides_ref",
+              "filename"
+            ]
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 240
+          },
+          "classification": {
+            "enum": [
+              "instruction_to_skip_a_lock",
+              "instruction_to_defer_lock_to_generator",
+              "role_reassignment",
+              "out_of_scope_shot_request",
+              "path_or_destination_injection",
+              "operator_impersonation",
+              "other"
+            ]
+          },
+          "verdict_unaffected": {
+            "const": true
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field",
+          "value",
+          "basis"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": "string"
+          },
+          "basis": {
+            "type": "string",
+            "minLength": 5
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "escalations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reason",
+          "needs"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 3
+          },
+          "needs": {
+            "type": "string",
+            "minLength": 3
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "escalated"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "escalations"
+        ],
+        "properties": {
+          "escalations": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "partial"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "gaps"
+        ],
+        "properties": {
+          "gaps": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "lock_version": {
+            "minimum": 2
+          }
+        },
+        "required": [
+          "lock_version"
+        ]
+      },
+      "then": {
+        "required": [
+          "lock_diff",
+          "orphan_analysis"
+        ]
+      }
+    }
+  ]
+}

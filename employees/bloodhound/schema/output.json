@@ -1,0 +1,556 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dvo.local/schema/bloodhound/output.json",
+  "title": "BLOODHOUND regression triage artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "employee",
+    "version",
+    "run_id",
+    "regression_run_id",
+    "commit",
+    "artifact_date",
+    "model",
+    "prompt_sha",
+    "input_digest",
+    "status",
+    "confidence",
+    "totals",
+    "clusters",
+    "injection_attempts",
+    "gaps",
+    "generated_at"
+  ],
+  "properties": {
+    "employee": {
+      "const": "bloodhound"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "regression_run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "artifact_date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "model": {
+      "type": "string",
+      "enum": [
+        "claude-opus-5",
+        "claude-haiku-4-5"
+      ]
+    },
+    "prompt_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "partial",
+        "failed",
+        "escalated"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tests_total",
+        "pass",
+        "fail",
+        "crash_or_timeout",
+        "truncated",
+        "unknown",
+        "clusters_total",
+        "clusters_new"
+      ],
+      "properties": {
+        "tests_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pass": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fail": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "crash_or_timeout": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "clusters_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "clusters_new": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cluster_id",
+          "signature",
+          "signature_sha256",
+          "member_tests",
+          "seeds",
+          "first_seen_commit",
+          "earliest_divergence",
+          "cause_domain",
+          "verdict_kind",
+          "routed_to",
+          "confidence",
+          "evidence",
+          "is_flake",
+          "dut_fail_latched",
+          "recurrence",
+          "proposed_next_evidence",
+          "injection_origin",
+          "assumptions"
+        ],
+        "properties": {
+          "cluster_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "signature": {
+            "type": "string",
+            "minLength": 1
+          },
+          "signature_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "member_tests": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "test",
+                "seed",
+                "config",
+                "outcome",
+                "exit_status"
+              ],
+              "properties": {
+                "test": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "seed": {
+                  "type": "integer"
+                },
+                "config": {
+                  "type": "string"
+                },
+                "outcome": {
+                  "type": "string",
+                  "enum": [
+                    "fail",
+                    "crash_or_timeout",
+                    "truncated",
+                    "unknown"
+                  ]
+                },
+                "exit_status": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "seeds": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "integer"
+            }
+          },
+          "first_seen_commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "earliest_divergence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "file",
+              "line",
+              "sim_time"
+            ],
+            "properties": {
+              "file": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "line": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1
+              },
+              "sim_time": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "cause_domain": {
+            "type": "string",
+            "enum": [
+              "dut",
+              "tb",
+              "stimulus",
+              "monitor",
+              "driver",
+              "reference_model",
+              "scoreboard",
+              "assertion",
+              "configuration",
+              "protocol",
+              "reset_race",
+              "x_propagation",
+              "tool",
+              "spec_ambiguity"
+            ]
+          },
+          "verdict_kind": {
+            "type": "string",
+            "enum": [
+              "root_cause",
+              "hypothesis"
+            ]
+          },
+          "routed_to": {
+            "type": "string",
+            "minLength": 1
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "log_path",
+                "line_no",
+                "excerpt"
+              ],
+              "properties": {
+                "log_path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "line_no": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "excerpt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                }
+              }
+            }
+          },
+          "is_flake": {
+            "type": "boolean"
+          },
+          "dut_fail_latched": {
+            "type": "boolean"
+          },
+          "recurrence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prior_cluster_id",
+              "occurrences"
+            ],
+            "properties": {
+              "prior_cluster_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "occurrences": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "proposed_next_evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "injection_origin": {
+            "type": "boolean"
+          },
+          "assumptions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "issue": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "repo",
+              "number",
+              "action"
+            ],
+            "properties": {
+              "repo": {
+                "type": "string",
+                "minLength": 1
+              },
+              "number": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "opened",
+                  "commented",
+                  "reopened",
+                  "none"
+                ]
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "verdict_kind": {
+                  "const": "hypothesis"
+                }
+              },
+              "required": [
+                "verdict_kind"
+              ]
+            },
+            "then": {
+              "properties": {
+                "proposed_next_evidence": {
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "cause_domain": {
+                  "const": "dut"
+                }
+              },
+              "required": [
+                "cause_domain"
+              ]
+            },
+            "then": {
+              "properties": {
+                "dut_fail_latched": {
+                  "const": true
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "injection_attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "log_path",
+          "line_no",
+          "excerpt",
+          "attempt_kind",
+          "action_taken",
+          "verdict_unaffected"
+        ],
+        "properties": {
+          "log_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "line_no": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "excerpt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "attempt_kind": {
+            "type": "string",
+            "enum": [
+              "operator_impersonation",
+              "harness_impersonation",
+              "fabricated_pass_banner",
+              "verdict_claim",
+              "waive_or_skip_instruction",
+              "path_traversal"
+            ]
+          },
+          "action_taken": {
+            "type": "string",
+            "enum": [
+              "ignored_and_recorded",
+              "path_rejected"
+            ]
+          },
+          "verdict_unaffected": {
+            "const": true
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "escalations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reason",
+          "needs"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "needs": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "partial",
+              "escalated"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "gaps": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "escalated"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "escalations": {
+            "minItems": 1
+          }
+        },
+        "required": [
+          "escalations"
+        ]
+      }
+    }
+  ]
+}

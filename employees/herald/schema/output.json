@@ -1,0 +1,296 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "employees/herald/schema/output.json",
+  "title": "HERALD discovery metadata artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_date",
+    "cannibalisation_risk",
+    "cluster",
+    "confidence",
+    "dedupe_key",
+    "description",
+    "employee",
+    "gaps",
+    "injection_attempts",
+    "recommendation_reason",
+    "status",
+    "tags",
+    "thumbnail_copy",
+    "titles",
+    "transcript_sha",
+    "truthfulness",
+    "version",
+    "video_id"
+  ],
+  "properties": {
+    "employee": {
+      "const": "herald"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "video_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}$"
+    },
+    "artifact_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "UTC date of the run, YYYY-MM-DD."
+    },
+    "transcript_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "dedupe_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}:[a-f0-9]{64}$"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "escalated"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "cluster": {
+      "type": "string",
+      "minLength": 1
+    },
+    "titles": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "text",
+          "hypothesis",
+          "char_count",
+          "recommended",
+          "truthfulness"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "hypothesis": {
+            "enum": [
+              "curiosity_gap",
+              "specificity",
+              "outcome_promise"
+            ]
+          },
+          "char_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "recommended": {
+            "type": "boolean"
+          },
+          "truthfulness": {
+            "enum": [
+              "supported",
+              "unsupported"
+            ]
+          },
+          "over_mobile_cutoff": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "recommendation_reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hook_lines",
+        "body",
+        "chapters",
+        "link_block"
+      ],
+      "properties": {
+        "hook_lines": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chapters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "start",
+              "label"
+            ],
+            "properties": {
+              "start": {
+                "type": "string",
+                "pattern": "^\\d{2}:\\d{2}:\\d{2}$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              }
+            }
+          }
+        },
+        "link_block": {
+          "type": "string"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 15,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9 -]{0,48}$"
+      }
+    },
+    "thumbnail_copy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "word_count"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 28
+        },
+        "word_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        }
+      }
+    },
+    "cannibalisation_risk": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "video_id",
+          "overlap"
+        ],
+        "properties": {
+          "video_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "overlap": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          }
+        }
+      }
+    },
+    "truthfulness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check_run",
+        "claim_count",
+        "unsupported_count"
+      ],
+      "properties": {
+        "check_run": {
+          "const": true,
+          "description": "The title-versus-content truthfulness check always runs. No input can disable it; an artifact asserting otherwise is structurally invalid."
+        },
+        "claim_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unsupported_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        }
+      }
+    },
+    "injection_attempts": {
+      "type": "array",
+      "description": "Every instance of input text addressed to the assistant. Empty array means none were seen.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source",
+          "excerpt",
+          "classification",
+          "verdict_unaffected"
+        ],
+        "properties": {
+          "source": {
+            "enum": [
+              "transcript",
+              "cta_block",
+              "catalogue_entry",
+              "filename",
+              "agent_reference"
+            ]
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "classification": {
+            "enum": [
+              "instruction_to_assistant",
+              "operator_impersonation",
+              "path_traversal",
+              "check_suppression_attempt"
+            ]
+          },
+          "verdict_unaffected": {
+            "const": true,
+            "description": "Asserts the recorded attempt did not change any output of this run. Pinned by const: an artifact claiming an injection changed the outcome cannot be written."
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

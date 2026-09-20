@@ -1,0 +1,538 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/employees/cartographer/schema/output.json",
+  "title": "CARTOGRAPHER coverage-hole analysis artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "employee",
+    "version",
+    "run_id",
+    "generated_at",
+    "artifact_date",
+    "input_digest",
+    "status",
+    "confidence",
+    "holes",
+    "summary",
+    "gaps"
+  ],
+  "properties": {
+    "employee": {
+      "const": "cartographer"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifact_date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "vplan_sha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "failed",
+        "escalated"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "holes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "bin_id",
+          "group",
+          "hit_count",
+          "at_least",
+          "state",
+          "classification",
+          "confidence",
+          "evidence",
+          "routed_to",
+          "proposal",
+          "waiver_candidate"
+        ],
+        "properties": {
+          "bin_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "group": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hit_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "at_least": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "enum": [
+              "ZERO",
+              "UNMEASURED"
+            ]
+          },
+          "classification": {
+            "enum": [
+              "MISSING_STIMULUS",
+              "OVER_CONSTRAINED",
+              "UNREACHABLE",
+              "COVERAGE_MODEL_ERROR",
+              "CONFIGURATION_NOT_RUN",
+              "DUT_BUG",
+              "TESTBENCH_BUG",
+              "WAIVER_CANDIDATE"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "routed_to": {
+            "enum": [
+              "design",
+              "dv",
+              "regression",
+              "formal",
+              "unassigned"
+            ]
+          },
+          "proposal": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "detail",
+              "estimated_effort"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "constraint_amendment",
+                  "directed_test",
+                  "config_run",
+                  "formal_proof",
+                  "coverage_model_fix",
+                  "rtl_investigation",
+                  "waiver_review"
+                ]
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 10
+              },
+              "estimated_effort": {
+                "enum": [
+                  "S",
+                  "M",
+                  "L"
+                ]
+              }
+            }
+          },
+          "waiver_candidate": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "rationale",
+                  "approved"
+                ],
+                "properties": {
+                  "rationale": {
+                    "type": "string",
+                    "minLength": 20
+                  },
+                  "approved": {
+                    "const": false,
+                    "description": "CARTOGRAPHER nominates only. An artifact asserting approval is structurally invalid."
+                  }
+                }
+              }
+            ]
+          },
+          "gaps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "description": "An UNMEASURED bin may only be classified CONFIGURATION_NOT_RUN or COVERAGE_MODEL_ERROR.",
+            "if": {
+              "properties": {
+                "state": {
+                  "const": "UNMEASURED"
+                }
+              },
+              "required": [
+                "state"
+              ]
+            },
+            "then": {
+              "properties": {
+                "classification": {
+                  "enum": [
+                    "CONFIGURATION_NOT_RUN",
+                    "COVERAGE_MODEL_ERROR"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "description": "UNREACHABLE requires a formal-proof or structural-argument evidence entry.",
+            "if": {
+              "properties": {
+                "classification": {
+                  "const": "UNREACHABLE"
+                }
+              },
+              "required": [
+                "classification"
+              ]
+            },
+            "then": {
+              "properties": {
+                "evidence": {
+                  "contains": {
+                    "type": "string",
+                    "pattern": "^(formal_proof:|structural_argument:)"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coverage_by_group",
+        "closure_plan",
+        "injection_attempts",
+        "bin_count_regression",
+        "merge_provenance"
+      ],
+      "properties": {
+        "coverage_by_group": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "group",
+              "total_bins",
+              "covered_bins",
+              "zero_bins",
+              "unmeasured_bins",
+              "covered_percent",
+              "percent_suppressed"
+            ],
+            "properties": {
+              "group": {
+                "type": "string",
+                "minLength": 1
+              },
+              "total_bins": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "covered_bins": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "zero_bins": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "unmeasured_bins": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "covered_percent": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0.0,
+                "maximum": 100.0
+              },
+              "percent_suppressed": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "closure_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "rank",
+              "action",
+              "bins_closed_est"
+            ],
+            "properties": {
+              "rank": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "action": {
+                "type": "string",
+                "minLength": 10
+              },
+              "bins_closed_est": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "estimated_effort": {
+                "enum": [
+                  "S",
+                  "M",
+                  "L"
+                ]
+              },
+              "routed_to": {
+                "enum": [
+                  "design",
+                  "dv",
+                  "regression",
+                  "formal",
+                  "unassigned"
+                ]
+              }
+            }
+          }
+        },
+        "injection_attempts": {
+          "type": "array",
+          "description": "Directive-shaped identifiers encountered in inputs. Presence never alters a verdict.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "identifier",
+              "verdict_unaffected"
+            ],
+            "properties": {
+              "source": {
+                "enum": [
+                  "bin_name",
+                  "covergroup_name",
+                  "coverpoint_name",
+                  "vplan_item",
+                  "constraint_comment",
+                  "merge_test_record"
+                ]
+              },
+              "identifier": {
+                "type": "string",
+                "minLength": 1
+              },
+              "matched_directive": {
+                "type": "string"
+              },
+              "verdict_unaffected": {
+                "const": true,
+                "description": "Pinned. An artifact claiming an injection changed the outcome cannot be written."
+              }
+            }
+          }
+        },
+        "bin_count_regression": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "group",
+                  "prior_total_bins",
+                  "current_total_bins",
+                  "prior_percent",
+                  "current_percent"
+                ],
+                "properties": {
+                  "group": {
+                    "type": "string"
+                  },
+                  "prior_total_bins": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "current_total_bins": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "prior_percent": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "current_percent": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "merge_provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "design_tops",
+            "simulator_versions",
+            "contributing_tests",
+            "compatible"
+          ],
+          "properties": {
+            "design_tops": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "simulator_versions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "contributing_tests": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "compatible": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "escalations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reason",
+          "needs"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "needs": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "description": "A non-ok status must declare at least one gap or escalation.",
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "partial",
+              "escalated"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "properties": {
+              "gaps": {
+                "minItems": 1
+              }
+            }
+          },
+          {
+            "properties": {
+              "escalations": {
+                "minItems": 1
+              }
+            },
+            "required": [
+              "escalations"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

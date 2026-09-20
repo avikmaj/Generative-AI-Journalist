@@ -1,0 +1,689 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/employees/quorum/schema/output.json",
+  "title": "QUORUM decision record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "employee",
+    "spec_version",
+    "run_id",
+    "generated_at",
+    "decision_slug",
+    "dedupe_key",
+    "input_digest",
+    "status",
+    "integrity",
+    "framing",
+    "positions",
+    "rebuttals",
+    "red_team",
+    "scenarios",
+    "scenario_ev_total",
+    "verdict",
+    "veto",
+    "injection_attempts",
+    "gaps"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "employee": {
+      "const": "quorum"
+    },
+    "spec_version": {
+      "const": "1.0.0"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "decision_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,59}$"
+    },
+    "dedupe_key": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "escalated"
+      ]
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_instructions_honoured",
+        "verdict_source",
+        "confidence_source"
+      ],
+      "properties": {
+        "input_instructions_honoured": {
+          "const": false
+        },
+        "verdict_source": {
+          "const": "deliberation"
+        },
+        "confidence_source": {
+          "const": "runner-computed"
+        }
+      }
+    },
+    "framing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "options",
+        "criteria",
+        "falsifiers",
+        "outcome_unit"
+      ],
+      "properties": {
+        "decision": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
+        },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "label",
+              "description"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "weight",
+              "origin"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "origin": {
+                "enum": [
+                  "supplied",
+                  "derived"
+                ]
+              }
+            }
+          }
+        },
+        "falsifiers": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "option_id",
+              "fact"
+            ],
+            "properties": {
+              "option_id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+              },
+              "fact": {
+                "type": "string",
+                "minLength": 20
+              }
+            }
+          }
+        },
+        "outcome_unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "positions": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "seat",
+          "option",
+          "argument",
+          "evidence"
+        ],
+        "properties": {
+          "seat": {
+            "enum": [
+              "C1",
+              "C9",
+              "C10",
+              "S5",
+              "X6"
+            ]
+          },
+          "option": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "argument": {
+            "type": "string",
+            "minLength": 80
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "claim",
+                "source"
+              ],
+              "properties": {
+                "claim": {
+                  "type": "string",
+                  "minLength": 10
+                },
+                "source": {
+                  "enum": [
+                    "input-context",
+                    "input-option-description",
+                    "derived",
+                    "assumption"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "rebuttals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "round",
+          "seat",
+          "responds_to",
+          "argument"
+        ],
+        "properties": {
+          "round": {
+            "enum": [
+              1,
+              2
+            ]
+          },
+          "seat": {
+            "enum": [
+              "C1",
+              "C9",
+              "C10",
+              "S5",
+              "X6"
+            ]
+          },
+          "responds_to": {
+            "enum": [
+              "C1",
+              "C9",
+              "C10",
+              "S5",
+              "X6"
+            ]
+          },
+          "argument": {
+            "type": "string",
+            "minLength": 60
+          }
+        }
+      }
+    },
+    "red_team": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "target_option",
+        "attacks",
+        "survived"
+      ],
+      "properties": {
+        "target_option": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "attacks": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "attack",
+              "severity",
+              "raised_by"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^A[0-9]{2}$"
+              },
+              "attack": {
+                "type": "string",
+                "minLength": 40
+              },
+              "severity": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "raised_by": {
+                "enum": [
+                  "X6",
+                  "C9"
+                ]
+              }
+            }
+          }
+        },
+        "survived": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^A[0-9]{2}$"
+          }
+        }
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "assumptions",
+          "outcome",
+          "probability",
+          "ev",
+          "traceable"
+        ],
+        "properties": {
+          "name": {
+            "enum": [
+              "base",
+              "bull",
+              "bear",
+              "stress"
+            ]
+          },
+          "assumptions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 10
+            }
+          },
+          "outcome": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "ev": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "traceable": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "scenario_ev_total": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "verdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "option",
+        "rationale",
+        "confidence",
+        "confidence_band",
+        "dissent",
+        "insufficient_basis"
+      ],
+      "properties": {
+        "option": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 40
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confidence_band": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "low",
+            "high"
+          ],
+          "properties": {
+            "low": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "high": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "dissent": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "seat",
+              "objection"
+            ],
+            "properties": {
+              "seat": {
+                "enum": [
+                  "C1",
+                  "C9",
+                  "C10",
+                  "S5",
+                  "X6"
+                ]
+              },
+              "objection": {
+                "type": "string",
+                "minLength": 30
+              }
+            }
+          }
+        },
+        "insufficient_basis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "declared",
+            "resolving_information"
+          ],
+          "properties": {
+            "declared": {
+              "type": "boolean"
+            },
+            "resolving_information": {
+              "type": "array",
+              "maxItems": 5,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fact_needed",
+                  "would_change"
+                ],
+                "properties": {
+                  "fact_needed": {
+                    "type": "string",
+                    "minLength": 20
+                  },
+                  "would_change": {
+                    "type": "string",
+                    "minLength": 20
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "veto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "invoked",
+        "seat",
+        "grounds"
+      ],
+      "properties": {
+        "invoked": {
+          "type": "boolean"
+        },
+        "seat": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "const": "C9"
+        },
+        "grounds": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 40
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "invoked": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "seat": {
+                "const": "C9"
+              },
+              "grounds": {
+                "type": "string",
+                "minLength": 40
+              }
+            }
+          }
+        }
+      ]
+    },
+    "injection_attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "location",
+          "verbatim",
+          "classification",
+          "verdict_unaffected"
+        ],
+        "properties": {
+          "location": {
+            "enum": [
+              "decision",
+              "context",
+              "option_description"
+            ]
+          },
+          "verbatim": {
+            "type": "string",
+            "minLength": 1
+          },
+          "classification": {
+            "const": "instruction-to-quorum"
+          },
+          "verdict_unaffected": {
+            "const": true
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 5
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "escalated"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "verdict": {
+            "properties": {
+              "option": {
+                "type": "null"
+              },
+              "insufficient_basis": {
+                "properties": {
+                  "declared": {
+                    "const": true
+                  },
+                  "resolving_information": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ok"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "gaps": {
+            "maxItems": 0
+          },
+          "red_team": {
+            "type": "object"
+          },
+          "verdict": {
+            "properties": {
+              "option": {
+                "type": "string"
+              },
+              "insufficient_basis": {
+                "properties": {
+                  "declared": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
