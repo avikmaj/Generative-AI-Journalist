@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.1.0
+
+Three defects found auditing the first generated specification, fixed at the
+standard rather than in that one document.
+
+### Added
+
+- `=== NUMERIC CONSISTENCY AND BOUNDARIES ===` in the standard. One definition
+  per number; show the worst case; name the comparison operator and test the
+  edge; and a whole input class failing is always an escalation whatever the
+  arithmetic says.
+
+### Changed
+
+- The retry policy is pinned in the non-negotiables — four attempts, 1s/2s/4s/8s
+  with jitter, a sixty-second request ceiling, counted against budget — so every
+  employee behaves identically under load instead of each specification choosing.
+- Every brief now states its confidence comparison as an operator rather than
+  the word "below", which left the value at the threshold undefined.
+
 ## 2.0.0
 
 Every brief is now complete and paste-ready.
