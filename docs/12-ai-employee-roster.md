@@ -14,21 +14,49 @@ definitions across four repositories:
 
 ## How to use this pack
 
-For each employee, in the order given:
+You paste **two blocks** into one session: PART A (section 1, always identical)
+followed by that employee's BRIEF (section 4, which you edit first).
 
-1. Open a fresh Claude Code session.
-2. Paste **PART A — STANDARD** (section 1). It is identical every time.
-3. Paste that employee's **BRIEF** block from section 4.
-4. Replace every `<<FILL: ...>>` marker with your real value first.
-5. Claude returns a complete `EMPLOYEE.md`.
-6. Save it to `employees/<handle>/EMPLOYEE.md`.
+**PART A is never edited. Only the BRIEF is edited.** Every `<<FILL: ...>>`
+marker you need to replace lives inside a BRIEF block. PART A mentions the
+marker syntax once, but that is an instruction telling Claude what to do with an
+unresolved marker — not a slot for you. Leave PART A byte-for-byte as written.
+
+For each employee, in this order:
+
+1. **Copy that employee's BRIEF block** from section 4 into a scratch editor
+   (Notepad, VS Code, anything).
+2. **Replace every `<<FILL: ...>>` in it** with your real value — including the
+   angle brackets. `<<FILL: path to log dir>>` becomes `/proj/regress/nightly`.
+   Search for `FILL` afterwards; the count must be zero.
+3. Open a fresh Claude Code session.
+4. **Paste PART A — STANDARD** (section 1), unmodified, exactly as written.
+5. **Paste your edited BRIEF** immediately after it, in the same message or the
+   next one.
+6. Claude returns a complete `EMPLOYEE.md`.
+7. Save it to `employees/<handle>/EMPLOYEE.md`.
+
+```
+┌─ session ──────────────────────────────────┐
+│  PART A — STANDARD    ← paste as-is        │
+│  EMPLOYEE BRIEF       ← paste your edit    │
+└────────────────────────────────────────────┘
+                 ↓
+            EMPLOYEE.md
+```
 
 Do them **one at a time, in wave order.** Build `KEYSTONE` first — it is the
 employee that validates every prompt you write after it.
 
 > **Marker convention.** `<<FILL: ...>>` is a value only you can supply — a real
-> path, a threshold, a destination. Never leave one in a finished prompt. Anything
-> not marked is already decided and should be used as written.
+> path, a threshold, a destination. Anything not marked is already decided; use it
+> as written.
+>
+> **If you genuinely don't know a value yet**, leave the marker in place and paste
+> it anyway. PART A instructs Claude to carry unresolved markers into an OPEN
+> QUESTIONS section at the end of the `EMPLOYEE.md` rather than inventing a path
+> or a threshold. Resolve them before the employee goes live — never before then
+> does a marker become harmless.
 
 ---
 
