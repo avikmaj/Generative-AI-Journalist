@@ -173,12 +173,17 @@ class EmployeeRunner:
                               apply=args.apply, base=reports_root)
 
         artifact: dict[str, Any] = {}
+        # A procedure that escalates never returns an Outcome — Run handles the
+        # CoreError and records it — so the verdict has to survive that path
+        # rather than being read off a variable the raise skipped.
+        verdict = "not_reached"
         with Run(employee=self.handle, version=self.version, model=self.model,
                  spec_path=self.spec, trigger_kind="manual", budget=budget,
                  allowlist=allowlist, secret_env_names=self.secret_env_names,
                  runs_root=reports_root / "runs") as run:
 
             outcome = self.procedure(run, args)
+            verdict = outcome.verdict
 
             confidence = 1.0 - sum(d.applied for d in outcome.deductions)
             confidence = round(max(0.0, min(1.0, confidence)), 2)
@@ -196,12 +201,16 @@ class EmployeeRunner:
                              "; ".join(d.reason for d in outcome.deductions if d.count)
                              or "confidence below threshold")
 
+            # The employee's own fields come last, so an employee whose schema
+            # shapes a common field differently can supply it. APERTURE's gaps
+            # are objects carrying a code and an impact, not strings; the run
+            # record still holds the string form for the trace either way.
             artifact = {
                 **self.common_fields(run, args, confidence, outcome.verdict),
-                **outcome.fields,
                 "status": run.resolve_status(),
                 "gaps": list(run.record.gaps),
                 "escalations": list(run.record.escalations),
+                **outcome.fields,
             }
             artifact = self.conform(artifact, schema)
 
@@ -210,6 +219,6 @@ class EmployeeRunner:
 
         import sys
         print(f"status={run.record.status} confidence={run.record.confidence} "
-              f"verdict={outcome.verdict} gaps={len(run.record.gaps)}",
+              f"verdict={verdict} gaps={len(run.record.gaps)}",
               file=sys.stderr)
         return 0

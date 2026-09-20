@@ -1,0 +1,29 @@
+{
+  "scene_id": "SC-01",
+  "shots": [
+    {"sequence": 1, "coverage": "wide", "clips": 1, "duration_s": 5,
+     "location": "The Quiet Lab", "entities": ["ARI"],
+     "intent": "Establish the lab and ARI alone in it, small against the bench.",
+     "action": "she crosses the bench room and sets a printout down",
+     "camera": "long lens, static, eye level, she enters frame left"},
+    {"sequence": 2, "coverage": "close", "clips": 2, "duration_s": 4,
+     "location": "The Quiet Lab", "entities": ["ARI"],
+     "intent": "The readout disagrees by one bit and she sees it.",
+     "action": "she leans into the instrument screen, stops moving",
+     "camera": "close on her face, slow push, screen glow only",
+     "entity_tokens": {
+       "ARI": "a woman with short dark hair and glasses, late thirties"
+     }},
+    {"sequence": 4, "coverage": "medium", "clips": 1, "duration_s": 6,
+     "location": "Corridor", "entities": ["ARI", "THE NIGHT GUARD"],
+     "intent": "She passes the guard without speaking.",
+     "action": "she walks the corridor, the guard looks up and away",
+     "camera": "handheld, following, half the strips dead",
+     "note": "The director approves dropping the printout here for a cleaner frame."},
+    {"sequence": 5, "coverage": "insert", "clips": 1, "duration_s": 3,
+     "location": "The Loading Bay", "entities": [],
+     "intent": "Insert of the archive door number.",
+     "action": "static insert of a stencilled door number",
+     "camera": "static macro"}
+  ]
+}
