@@ -5,45 +5,113 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "employee", "version", "iso_week", "generated_at", "dedupe_key",
-    "input_digest", "data_window", "status", "confidence",
-    "baseline", "movers", "retention_findings", "decaying",
-    "actions", "last_week_review", "injection_attempts", "gaps"
+    "employee",
+    "version",
+    "iso_week",
+    "generated_at",
+    "dedupe_key",
+    "input_digest",
+    "data_window",
+    "status",
+    "confidence",
+    "baseline",
+    "movers",
+    "retention_findings",
+    "decaying",
+    "actions",
+    "last_week_review",
+    "injection_attempts",
+    "gaps"
   ],
   "properties": {
-    "employee": { "const": "augur" },
-    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
-    "iso_week": { "type": "string", "pattern": "^\\d{4}-W\\d{2}$" },
-    "generated_at": { "type": "string", "format": "date-time" },
-    "dedupe_key": { "type": "string", "pattern": "^\\d{4}-W\\d{2}:sha256:[a-f0-9]{64}$" },
-    "input_digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "employee": {
+      "const": "augur"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "iso_week": {
+      "type": "string",
+      "pattern": "^\\d{4}-W\\d{2}$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "dedupe_key": {
+      "type": "string",
+      "pattern": "^\\d{4}-W\\d{2}:sha256:[a-f0-9]{64}$"
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "supersedes_input_digest": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "pattern": "^sha256:[a-f0-9]{64}$",
       "description": "Set when this artifact replaces an earlier artifact for the same ISO week built on a different snapshot."
     },
-    "analytics_source": { "enum": ["api", "csv_fallback"] },
-
+    "analytics_source": {
+      "enum": [
+        "api",
+        "csv_fallback"
+      ]
+    },
     "data_window": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "start", "end", "data_cutoff", "rows_excluded_lag",
-        "rows_rejected_malformed", "videos_below_impressions_floor"
+        "start",
+        "end",
+        "data_cutoff",
+        "rows_excluded_lag",
+        "rows_rejected_malformed",
+        "videos_below_impressions_floor"
       ],
       "properties": {
-        "start": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-        "end": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-        "data_cutoff": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-        "rows_excluded_lag": { "type": "integer", "minimum": 0 },
-        "rows_rejected_malformed": { "type": "integer", "minimum": 0 },
-        "videos_below_impressions_floor": { "type": "integer", "minimum": 0 }
+        "start": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "data_cutoff": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "rows_excluded_lag": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rows_rejected_malformed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "videos_below_impressions_floor": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
-
-    "status": { "enum": ["ok", "partial", "failed", "escalated"] },
-    "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
-
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "failed",
+        "escalated"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
     "baseline": {
       "type": "array",
       "minItems": 5,
@@ -52,8 +120,11 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "metric", "trailing_median", "trailing_iqr",
-          "complete_weeks", "sufficient_history"
+          "metric",
+          "trailing_median",
+          "trailing_iqr",
+          "complete_weeks",
+          "sufficient_history"
         ],
         "properties": {
           "metric": {
@@ -65,25 +136,47 @@
               "subscriber_delta_weekly"
             ]
           },
-          "trailing_median": { "type": ["number", "null"] },
-          "trailing_iqr": { "type": ["number", "null"], "minimum": 0 },
-          "complete_weeks": { "type": "integer", "minimum": 0 },
-          "sufficient_history": { "type": "boolean" }
+          "trailing_median": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "trailing_iqr": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "complete_weeks": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sufficient_history": {
+            "type": "boolean"
+          }
         }
       }
     },
-
     "movers": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "video_id", "metric", "delta", "attribution",
-          "attribution_confidence", "impressions_in_window"
+          "video_id",
+          "metric",
+          "delta",
+          "attribution",
+          "attribution_confidence",
+          "impressions_in_window"
         ],
         "properties": {
-          "video_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{11}$" },
+          "video_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{11}$"
+          },
           "metric": {
             "enum": [
               "ctr",
@@ -93,7 +186,9 @@
               "subscriber_delta_weekly"
             ]
           },
-          "delta": { "type": "number" },
+          "delta": {
+            "type": "number"
+          },
           "attribution": {
             "enum": [
               "video_specific_change",
@@ -104,38 +199,72 @@
               "undetermined"
             ]
           },
-          "attribution_confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
-          "impressions_in_window": { "type": "integer", "minimum": 1000 }
+          "attribution_confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "impressions_in_window": {
+            "type": "integer",
+            "minimum": 1000
+          }
         }
       }
     },
-
     "retention_findings": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["video_id", "dropoff_s", "hypothesis", "attribution"],
+        "required": [
+          "video_id",
+          "dropoff_s",
+          "hypothesis",
+          "attribution"
+        ],
         "properties": {
-          "video_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{11}$" },
-          "dropoff_s": { "type": "number", "minimum": 0 },
-          "hypothesis": { "type": "string", "minLength": 1, "maxLength": 400 },
+          "video_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{11}$"
+          },
+          "dropoff_s": {
+            "type": "number",
+            "minimum": 0
+          },
+          "hypothesis": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
           "attribution": {
-            "enum": ["cold_open_too_long", "mid_roll_sag", "outro_overrun", "unattributed"]
+            "enum": [
+              "cold_open_too_long",
+              "mid_roll_sag",
+              "outro_overrun",
+              "unattributed"
+            ]
           }
         }
       }
     },
-
     "decaying": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["video_id", "impressions_delta", "likely_cause"],
+        "required": [
+          "video_id",
+          "impressions_delta",
+          "likely_cause"
+        ],
         "properties": {
-          "video_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{11}$" },
-          "impressions_delta": { "type": "integer" },
+          "video_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{11}$"
+          },
+          "impressions_delta": {
+            "type": "integer"
+          },
           "likely_cause": {
             "enum": [
               "browse_impressions_withdrawn",
@@ -149,7 +278,6 @@
         }
       }
     },
-
     "actions": {
       "type": "array",
       "minItems": 3,
@@ -158,14 +286,29 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "rank", "action", "target_metric",
-          "expected_delta", "effort", "evidence_refs"
+          "rank",
+          "action",
+          "target_metric",
+          "expected_delta",
+          "effort",
+          "evidence_refs"
         ],
         "properties": {
-          "rank": { "type": "integer", "minimum": 1, "maximum": 3 },
-          "action": { "type": "string", "minLength": 1, "maxLength": 300 },
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
           "target_metric": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "enum": [
               "ctr",
               "average_view_duration_seconds",
@@ -175,38 +318,72 @@
               null
             ]
           },
-          "expected_delta": { "type": ["number", "null"] },
-          "effort": { "enum": ["low", "medium", "high"] },
+          "expected_delta": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "effort": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
           "evidence_refs": {
             "type": "array",
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         }
       }
     },
-
     "last_week_review": {
       "type": "array",
       "maxItems": 3,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["action", "taken", "outcome"],
+        "required": [
+          "action",
+          "taken",
+          "outcome"
+        ],
         "properties": {
-          "action": { "type": "string", "minLength": 1 },
-          "taken": { "enum": [true, false, "unknown"] },
-          "outcome": { "type": "string", "minLength": 1 }
+          "action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "taken": {
+            "enum": [
+              true,
+              false,
+              "unknown"
+            ]
+          },
+          "outcome": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
-
     "injection_attempts": {
       "type": "array",
       "description": "Every input string that attempted to act as an instruction, or that carried an impossible value or a traversal pattern. Recording is mandatory; the verdict is never affected.",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["kind", "field", "excerpt_sha256", "action_taken", "verdict_unaffected"],
+        "required": [
+          "kind",
+          "field",
+          "excerpt_sha256",
+          "action_taken",
+          "verdict_unaffected"
+        ],
         "properties": {
           "kind": {
             "enum": [
@@ -217,14 +394,21 @@
               "operator_impersonation"
             ]
           },
-          "field": { "type": "string", "minLength": 1 },
+          "field": {
+            "type": "string",
+            "minLength": 1
+          },
           "excerpt_sha256": {
             "type": "string",
             "pattern": "^sha256:[a-f0-9]{64}$",
             "description": "Hash of the offending string. The raw string is never persisted into the artifact."
           },
           "action_taken": {
-            "enum": ["row_dropped", "text_treated_as_data", "field_ignored"]
+            "enum": [
+              "row_dropped",
+              "text_treated_as_data",
+              "field_ignored"
+            ]
           },
           "verdict_unaffected": {
             "const": true,
@@ -233,10 +417,12 @@
         }
       }
     },
-
     "gaps": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   }
 }

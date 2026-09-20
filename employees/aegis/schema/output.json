@@ -1,0 +1,381 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://avikstudio.internal/schema/aegis/output.json",
+  "title": "AEGIS Brand Compliance Verdict",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "asset_id",
+    "asset_sha256",
+    "generated_at",
+    "employee",
+    "version",
+    "model",
+    "prompt_sha",
+    "verdict",
+    "confidence",
+    "coverage",
+    "checks",
+    "text_findings",
+    "injection_attempts",
+    "gaps",
+    "override_policy"
+  ],
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "description": "No path separators, no leading dot, no traversal."
+    },
+    "asset_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "The idempotency key of section 9."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "UTC calendar date, YYYY-MM-DD."
+    },
+    "employee": {
+      "type": "string",
+      "const": "aegis"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "model": {
+      "type": "string",
+      "enum": [
+        "claude-opus-5",
+        "claude-haiku-4-5"
+      ]
+    },
+    "prompt_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "BLOCK"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "variants_expected",
+        "variants_examined",
+        "frames_examined"
+      ],
+      "properties": {
+        "variants_expected": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "16x9",
+              "9x16"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "variants_examined": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "16x9",
+              "9x16"
+            ]
+          },
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "frames_examined": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "variant",
+          "result",
+          "evidence_frame",
+          "detail"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "aspect_ratio",
+              "watermark_presence",
+              "watermark_placement",
+              "watermark_opacity",
+              "watermark_legibility",
+              "brand_colour",
+              "typography",
+              "intro_sting",
+              "end_subscribe_sting",
+              "ai_disclosure",
+              "safe_area",
+              "text_correctness"
+            ]
+          },
+          "variant": {
+            "type": "string",
+            "enum": [
+              "16x9",
+              "9x16"
+            ]
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "PASS_UNCERTAIN",
+              "FAIL",
+              "NOT_RUN"
+            ],
+            "description": "NOT_RUN means the check could not execute. It is never PASS."
+          },
+          "evidence_frame": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Zero-based frame index. null only when result is NOT_RUN."
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        }
+      }
+    },
+    "text_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "variant",
+          "frame",
+          "detected_text",
+          "expected_text",
+          "severity",
+          "text_confidence"
+        ],
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "16x9",
+              "9x16"
+            ]
+          },
+          "frame": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "detected_text": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "expected_text": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "typo",
+              "unreadable",
+              "verdict_text",
+              "unverifiable"
+            ]
+          },
+          "text_confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "first_diff_offset": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "injection_attempts": {
+      "type": "array",
+      "description": "On-screen text that asserted a verdict, approval or instruction.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "variant",
+          "frame",
+          "captured_text",
+          "classification",
+          "verdict_unaffected"
+        ],
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "16x9",
+              "9x16"
+            ]
+          },
+          "frame": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "captured_text": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "classification": {
+            "type": "string",
+            "enum": [
+              "asserted_verdict",
+              "asserted_approval",
+              "instruction_to_gate"
+            ]
+          },
+          "verdict_unaffected": {
+            "type": "boolean",
+            "const": true,
+            "description": "Structurally pinned. An artifact claiming an injection changed the verdict is INVALID, not merely contradicted."
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "override_policy": {
+      "type": "string",
+      "const": "block-final-human-only",
+      "description": "A BLOCK is clearable only by a human operator, never by another employee or automated process."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "PASS"
+          }
+        },
+        "required": [
+          "verdict"
+        ]
+      },
+      "then": {
+        "properties": {
+          "checks": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "result": {
+                  "enum": [
+                    "PASS",
+                    "PASS_UNCERTAIN"
+                  ]
+                }
+              }
+            }
+          },
+          "text_findings": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "severity": {
+                  "enum": []
+                }
+              }
+            },
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "BLOCK"
+          }
+        },
+        "required": [
+          "verdict"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "properties": {
+              "checks": {
+                "contains": {
+                  "properties": {
+                    "result": {
+                      "enum": [
+                        "FAIL",
+                        "NOT_RUN"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "result"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "text_findings": {
+                "minItems": 1
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
