@@ -24,3 +24,6 @@ jobs:
 
       - name: Extracted schemas match their specifications
         run: python scripts/extract_employee_schemas.py --check
+
+      - name: Shared loop behaves as specified
+        run: python -m unittest discover -s employees/core/tests -t . -v
