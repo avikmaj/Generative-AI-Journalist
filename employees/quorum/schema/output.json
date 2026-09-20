@@ -542,7 +542,10 @@
             "string",
             "null"
           ],
-          "const": "C9"
+          "enum": [
+            "C9",
+            null
+          ]
         },
         "grounds": {
           "type": [

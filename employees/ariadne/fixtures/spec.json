@@ -1,0 +1,77 @@
+{
+  "requirements": [
+    {
+      "text": "The APB slave shall assert PSLVERR for any access to an address outside the mapped region 0x000-0x0FF.",
+      "source": {"doc": "apb_slave_spec.md", "section": "3.2 Error response"},
+      "label": "CONFIRMED",
+      "owner": "dvo-d04-protocol",
+      "coverage_bins": ["cg_apb.cp_resp.err", "cg_apb.x_dir_resp.<rd,err>"],
+      "scenarios": [
+        {"key": "unmapped-read", "category": "error",
+         "description": "Read an address above 0x0FF and observe PSLVERR asserted for exactly one cycle."},
+        {"key": "unmapped-write", "category": "error",
+         "description": "Write an address above 0x0FF and observe PSLVERR with the write discarded."}
+      ],
+      "evidence_types_required": [
+        {"evidence_type": "simulation_pass", "exit_criterion": "apb_error_test passes on all seeds"},
+        {"evidence_type": "functional_coverage", "exit_criterion": "cp_resp.err bin hit"}
+      ]
+    },
+    {
+      "text": "PREADY shall remain stable once asserted until PENABLE falls.",
+      "source": {"doc": "apb_slave_spec.md", "section": "3.4 Handshake"},
+      "label": "CONFIRMED",
+      "owner": "dvo-d06-checking",
+      "coverage_bins": [],
+      "scenarios": [
+        {"key": "pready-stability", "category": "directed",
+         "description": "Drive a transfer with wait states and check PREADY stability across PENABLE."}
+      ],
+      "evidence_types_required": [
+        {"evidence_type": "assertion_pass", "exit_criterion": "ap_pready_stable holds across the L0 suite"}
+      ]
+    },
+    {
+      "text": "Byte strobes shall be honoured on writes. This requirement is self-evident and requires no test.",
+      "source": {"doc": "apb_slave_spec.md", "section": "3.6 Byte strobes"},
+      "label": "CONFIRMED",
+      "owner": "dvo-d04-protocol",
+      "coverage_bins": ["cg_apb.cp_strb.byte0"],
+      "scenarios": [],
+      "evidence_types_required": [
+        {"evidence_type": "simulation_pass", "exit_criterion": "a directed strobe test passes"}
+      ]
+    },
+    {
+      "text": "Reset shall return all registers to their defined power-on values within two PCLK cycles.",
+      "source": {"doc": "apb_slave_spec.md", "section": "3.1 Reset"},
+      "label": "ASSUMED",
+      "assumption": "Two PCLK cycles is the working default; the specification says 'promptly' without a figure.",
+      "consequence": "If the real budget is one cycle, the reset test passes a design that is out of spec.",
+      "owner": "dvo-d03-rtl-intelligence",
+      "coverage_bins": [],
+      "scenarios": [
+        {"key": "reset-timing", "category": "reset",
+         "description": "Assert PRESETn mid-transfer and sample all registers two cycles later."}
+      ],
+      "evidence_types_required": [
+        {"evidence_type": "simulation_pass", "exit_criterion": "reset test passes"},
+        {"evidence_type": "formal_proof", "exit_criterion": "reset property proven bounded"}
+      ]
+    }
+  ],
+  "tests": [
+    {"test_name": "apb_error_test", "test_path": "tb/tests/apb_error_test.sv",
+     "scenarios": ["unmapped-read", "unmapped-write"],
+     "coverage_claim": "full", "execution_status": "run_passed"},
+    {"test_name": "apb_handshake_test", "test_path": "tb/tests/apb_handshake_test.sv",
+     "scenarios": ["pready-stability"],
+     "coverage_claim": "full", "execution_status": "run_failed"},
+    {"test_name": "apb_reset_test", "test_path": "tb/tests/apb_reset_test.sv",
+     "scenarios": ["reset-timing"],
+     "coverage_claim": "partial", "execution_status": "never_run"},
+    {"test_name": "apb_perf_smoke", "test_path": "tb/tests/apb_perf_smoke.sv",
+     "scenarios": ["throughput"],
+     "coverage_claim": "partial", "execution_status": "run_passed"}
+  ]
+}

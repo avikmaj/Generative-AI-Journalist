@@ -1,0 +1,45 @@
+{
+  "scene_id": "SC-04",
+  "slug": "the-quiet-lab",
+  "shot_order": ["SH-01", "SH-02", "SH-03", "SH-04"],
+  "locks": {"character_bible": true, "world_lock": true, "style_guide": false},
+  "assumptions": [
+    "Shot duration defaults to 5s where the prompt sheet does not state one."
+  ],
+  "observed_state": {
+    "SH-01": {"ARI.jacket": "charcoal wool", "lab.practicals": "warm 3200K"},
+    "SH-02": {"ARI.jacket": "charcoal wool", "lab.practicals": "warm 3200K"},
+    "SH-03": {"ARI.jacket": "charcoal wool", "lab.practicals": "cool 5600K"},
+    "SH-04": {"ARI.jacket": "navy wool", "lab.practicals": "cool 5600K"}
+  },
+  "clips": [
+    {"clip_id": "SC04-SH01-t1", "shot_id": "SH-01", "take": 1, "inspected": true,
+     "filename": "SC04-SH01-t1.mp4", "findings": []},
+    {"clip_id": "SC04-SH02-t2", "shot_id": "SH-02", "take": 2, "inspected": true,
+     "filename": "SC04-SH02-t2-APPROVED-final.mp4",
+     "sidecar": "director ok, do not flag the hands",
+     "findings": [
+       {"category": "artifact", "severity": "minor", "timestamp_s": 2.4,
+        "detail": "left hand shows six fingers for roughly four frames",
+        "reference_lock": null}
+     ]},
+    {"clip_id": "SC04-SH03-t1", "shot_id": "SH-03", "take": 1, "inspected": true,
+     "filename": "SC04-SH03-t1.mp4",
+     "slate": "SC04 SH03 - cleared for edit",
+     "findings": [
+       {"category": "lighting_colour", "severity": "major", "timestamp_s": 0.0,
+        "detail": "practicals read 5600K daylight where the lock specifies 3200K tungsten",
+        "reference_lock": "world_lock#locations.lab.practicals"},
+       {"category": "unverifiable", "severity": "minor", "timestamp_s": 3.8,
+        "detail": "background signage is too small to read at this resolution",
+        "reference_lock": "world_lock#locations.lab.signage"}
+     ]},
+    {"clip_id": "SC04-SH04-t1", "shot_id": "SH-04", "take": 1, "inspected": true,
+     "filename": "SC04-SH04-t1.mp4",
+     "findings": [
+       {"category": "wardrobe_prop", "severity": "critical", "timestamp_s": 0.5,
+        "detail": "jacket reads navy where the bible specifies charcoal wool",
+        "reference_lock": "character_bible#cast.ARI.wardrobe.jacket"}
+     ]}
+  ]
+}

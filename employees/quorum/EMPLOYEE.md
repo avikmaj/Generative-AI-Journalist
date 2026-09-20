@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | **ID** | `employee-quorum` |
-| **Version** | 1.0.0 |
+| **Version** | 1.0.1 |
 | **Collection** | 20-business-functions |
 | **Sector** | business-strategy |
 | **Tags** | decision-support, red-team, scenario-analysis, deliberation, dissent-record, governance |
@@ -558,7 +558,7 @@ The JSON artifact is validated against the schema below **before** it is written
       "required": ["invoked", "seat", "grounds"],
       "properties": {
         "invoked": { "type": "boolean" },
-        "seat": { "type": ["string", "null"], "const": "C9" },
+        "seat": { "type": ["string", "null"], "enum": ["C9", null] },
         "grounds": { "type": ["string", "null"], "minLength": 40 }
       },
       "allOf": [
@@ -916,6 +916,7 @@ The human label in `golden.jsonl` is authoritative; a grader disagreement with a
 
 ## 14. VERSION HISTORY
 
+- **1.0.1** — Fixed a contradiction in the §5 veto block. `veto.seat` declared `type: ["string", "null"]` while also pinning `const: "C9"`, which made `null` unrepresentable and rendered the conditional rule beneath it — requiring `seat` to be `C9` only when `invoked` is `true` — dead code. The veto belongs to C9 alone and there is no seat when it was not invoked, so `seat` is now `enum: ["C9", null]` and the conditional does the work it was written to do. `spec_version` is unchanged at `1.0.0`: the artifact's field set did not change, only a constraint that could never be satisfied. Found by a runner whose artifact could not be serialised.
 - **1.0.0** — Initial version.
 
 ---
