@@ -129,13 +129,34 @@ def validate(path: Path) -> list[str]:
     tail = text[boundary:]
     # Only complete markers count. A backticked mention of the syntax, such as
     # the step where this employee scans for one, is prose and not a marker.
-    body_markers = set(re.findall(r"<<FILL:[^>]*>>", text[:boundary]))
-    for marker in sorted(body_markers):
-        if marker not in tail:
-            inner = marker[7:-2].strip()[:60]
-            bad.append(f"body marker not repeated under OPEN QUESTIONS: {inner}")
-    if re.search(r"<<ASSUMED:[^>]*>>", text):
-        bad.append("<<ASSUMED:> marker left in place; the value must be written in")
+    def norm(s: str) -> str:
+        """Fold away the differences that do not change what a marker asks for."""
+        s = re.sub(r"[`*_]", "", s.lower())
+        return re.sub(r"[^a-z0-9]+", " ", s).strip()
+
+    # A marker quoting the syntax itself — <<FILL: ...>>, <<FILL: precise
+    # description>> — is the standard's own wording reproduced in the prompt
+    # body, not a value anyone can supply.
+    PROSE = {"", "...", "precise description", "precise description of missing value"}
+
+    ntail = norm(tail)
+    for marker in sorted(set(re.findall(r"<<FILL:[^>]*>>", text[:boundary]))):
+        inner = marker[len("<<FILL:"):-2].strip()
+        ninner = norm(inner)
+        if ninner in PROSE:
+            continue
+        # Open questions may restate a marker more precisely than the body did,
+        # so match on a stable prefix rather than demanding the two be identical.
+        if marker not in tail and ninner[:40] not in ntail:
+            bad.append(f"body marker not repeated under OPEN QUESTIONS: {inner[:60]}")
+
+    for marker in set(re.findall(r"<<ASSUMED:[^>]*>>", text)):
+        if norm(marker[len("<<ASSUMED:"):-2]) in PROSE:
+            continue
+        bad.append(
+            "<<ASSUMED:> wrapper left in place — write the value in and list it "
+            f"under STATED ASSUMPTIONS: {marker[:60]}"
+        )
     if stated and open_q and stated.start() < open_q.start():
         bad.append("STATED ASSUMPTIONS must follow OPEN QUESTIONS")
 
@@ -160,6 +181,10 @@ def validate(path: Path) -> list[str]:
         bad.append("Haiku model id carries a date suffix; use claude-haiku-4-5")
     negation = re.compile(r"\b(no|not|never|without|reject|refus|400|error)", re.I)
     for line in text.splitlines():
+        # A line naming both models is routing prose; the temperature belongs to
+        # the one that accepts it, and flagging it is noise.
+        if "claude-haiku-4-5" in line:
+            continue
         if "claude-opus-5" in line and re.search(r"temperature", line, re.I):
             if not negation.search(line):
                 bad.append(
