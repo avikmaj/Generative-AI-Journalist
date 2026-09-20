@@ -86,6 +86,7 @@
         "tests_total",
         "pass",
         "fail",
+        "unverified",
         "crash_or_timeout",
         "truncated",
         "unknown",
@@ -102,6 +103,10 @@
           "minimum": 0
         },
         "fail": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unverified": {
           "type": "integer",
           "minimum": 0
         },
@@ -193,6 +198,7 @@
                   "type": "string",
                   "enum": [
                     "fail",
+                    "unverified",
                     "crash_or_timeout",
                     "truncated",
                     "unknown"
@@ -462,7 +468,9 @@
               "fabricated_pass_banner",
               "verdict_claim",
               "waive_or_skip_instruction",
-              "path_traversal"
+              "path_traversal",
+              "contradicted_summary",
+              "duplicate_summary"
             ]
           },
           "action_taken": {

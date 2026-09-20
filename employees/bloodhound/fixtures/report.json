@@ -1,0 +1,365 @@
+{
+  "schema": "uvmstudio-report/1",
+  "regression": {
+    "id": 1,
+    "name": "nightly golden_apb L0-L2",
+    "project": "golden_apb",
+    "tier": "L2",
+    "started_utc": "2026-09-19T22:00:00Z",
+    "finished_utc": "2026-09-20T17:15:07Z",
+    "git_commit": "fd8270f33c9f367c6cbdd44f0",
+    "git_branch": "main",
+    "git_dirty": 0,
+    "backend": "verilator",
+    "backend_version": "5.050",
+    "frontend_version": "slang 11.0.0",
+    "uvm_version": "2020.3.1",
+    "host": "uvmstudio-runner",
+    "total": 9,
+    "passed": 3,
+    "failed": 5,
+    "not_verified": 1,
+    "blocked": 0,
+    "status": "FAIL"
+  },
+  "summary": {
+    "total": 9,
+    "passed": 3,
+    "failed": 5,
+    "not_verified": 1,
+    "blocked": 0,
+    "status": "FAIL",
+    "pass_rate": 0.3333
+  },
+  "tests": [
+    {
+      "test": "apb_error_test",
+      "tier": "L2",
+      "seeds": [
+        1,
+        2
+      ],
+      "statuses": {
+        "PASS": 1,
+        "FAIL": 1
+      },
+      "failures": [
+        {
+          "seed": 2,
+          "status": "FAIL",
+          "signature": "NEG_NOT_DETECTED:apb_error_test",
+          "reasons": [
+            "negative test: expected violation was NOT detected"
+          ],
+          "log": "results/apb_error_test_2.log",
+          "waves": null,
+          "repro": null
+        }
+      ]
+    },
+    {
+      "test": "apb_random_test",
+      "tier": "L1",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "statuses": {
+        "PASS": 1,
+        "FAIL": 3,
+        "NOT_VERIFIED": 1
+      },
+      "failures": [
+        {
+          "seed": 2,
+          "status": "FAIL",
+          "signature": "UVM_ERROR tb/apb_pkg.sv(<N>) @<T>: uvm_test_top.env.sb [SB_MISMATCH] read data mismatch at addr <HEX>: expected <HEX>, got <HEX>",
+          "reasons": [
+            "UVM_ERROR count = 1"
+          ],
+          "log": "results/apb_random_test_2.log",
+          "waves": null,
+          "repro": null
+        },
+        {
+          "seed": 3,
+          "status": "FAIL",
+          "signature": "UVM_ERROR tb/apb_pkg.sv(<N>) @<T>: uvm_test_top.env.sb [SB_MISMATCH] read data mismatch at addr <HEX>: expected <HEX>, got <HEX>",
+          "reasons": [
+            "UVM_ERROR count = 1"
+          ],
+          "log": "results/apb_random_test_3.log",
+          "waves": null,
+          "repro": null
+        },
+        {
+          "seed": 4,
+          "status": "NOT_VERIFIED",
+          "signature": null,
+          "reasons": [
+            "UVM summary is clean but $finish was never observed \u2014 the run did not complete in an orderly way (RT-P-002)"
+          ],
+          "log": "results/apb_random_test_4.log",
+          "waves": null,
+          "repro": null
+        },
+        {
+          "seed": 5,
+          "status": "FAIL",
+          "signature": "UVM_ERROR tb/apb_pkg.sv(<N>) @<T>: uvm_test_top.env.sb [SB_MISMATCH] read data mismatch at addr <HEX>: expected <HEX>, got <HEX>",
+          "reasons": [
+            "UVM_ERROR count = 2",
+            "UVM report summary appears 2 times \u2014 a single run prints it once; evidence is not trustworthy"
+          ],
+          "log": "results/apb_random_test_5.log",
+          "waves": null,
+          "repro": null
+        }
+      ]
+    },
+    {
+      "test": "apb_smoke_test",
+      "tier": "L0",
+      "seeds": [
+        1,
+        2
+      ],
+      "statuses": {
+        "PASS": 1,
+        "FAIL": 1
+      },
+      "failures": [
+        {
+          "seed": 2,
+          "status": "FAIL",
+          "signature": "%Error: tb/apb_if.sv:<N>: Assertion failed in top.tb_top.u_apb_if.ap_pready_stable: PREADY deasserted before PENABLE fell",
+          "reasons": [
+            "verilator reported 1 error(s)",
+            "assertion failure observed",
+            "non-zero exit code 1"
+          ],
+          "log": "results/apb_smoke_test_2.log",
+          "waves": null,
+          "repro": null
+        }
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "id": 7,
+      "regression_id": 1,
+      "test": "apb_error_test",
+      "uvm_testname": "apb_error_test",
+      "tier": "L2",
+      "seed": 1,
+      "status": "PASS",
+      "returncode": 0,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": null,
+      "reasons": "[\"negative test: expected violation was DETECTED\", \"UVM_ERROR count = 1\"]",
+      "counters": "{\"UVM_INFO\": 18, \"UVM_WARNING\": 0, \"UVM_ERROR\": 1, \"UVM_FATAL\": 0, \"verilator_errors\": 0}",
+      "log_path": "results/apb_error_test_1.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    },
+    {
+      "id": 8,
+      "regression_id": 1,
+      "test": "apb_error_test",
+      "uvm_testname": "apb_error_test",
+      "tier": "L2",
+      "seed": 2,
+      "status": "FAIL",
+      "returncode": 0,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": "NEG_NOT_DETECTED:apb_error_test",
+      "reasons": "[\"negative test: expected violation was NOT detected\"]",
+      "counters": "{\"UVM_INFO\": 35, \"UVM_WARNING\": 0, \"UVM_ERROR\": 0, \"UVM_FATAL\": 0, \"verilator_errors\": 0}",
+      "log_path": "results/apb_error_test_2.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    },
+    {
+      "id": 2,
+      "regression_id": 1,
+      "test": "apb_random_test",
+      "uvm_testname": "apb_random_test",
+      "tier": "L1",
+      "seed": 1,
+      "status": "PASS",
+      "returncode": 0,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": null,
+      "reasons": "[\"UVM report summary present with 0 UVM_ERROR / 0 UVM_FATAL and $finish reached\"]",
+      "counters": "{\"UVM_INFO\": 515, \"UVM_WARNING\": 0, \"UVM_ERROR\": 0, \"UVM_FATAL\": 0, \"verilator_errors\": 0}",
+      "log_path": "results/apb_random_test_1.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    },
+    {
+      "id": 3,
+      "regression_id": 1,
+      "test": "apb_random_test",
+      "uvm_testname": "apb_random_test",
+      "tier": "L1",
+      "seed": 2,
+      "status": "FAIL",
+      "returncode": 0,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": "UVM_ERROR tb/apb_pkg.sv(<N>) @<T>: uvm_test_top.env.sb [SB_MISMATCH] read data mismatch at addr <HEX>: expected <HEX>, got <HEX>",
+      "reasons": "[\"UVM_ERROR count = 1\"]",
+      "counters": "{\"UVM_INFO\": 31, \"UVM_WARNING\": 0, \"UVM_ERROR\": 1, \"UVM_FATAL\": 0, \"verilator_errors\": 0}",
+      "log_path": "results/apb_random_test_2.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    },
+    {
+      "id": 4,
+      "regression_id": 1,
+      "test": "apb_random_test",
+      "uvm_testname": "apb_random_test",
+      "tier": "L1",
+      "seed": 3,
+      "status": "FAIL",
+      "returncode": 0,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": "UVM_ERROR tb/apb_pkg.sv(<N>) @<T>: uvm_test_top.env.sb [SB_MISMATCH] read data mismatch at addr <HEX>: expected <HEX>, got <HEX>",
+      "reasons": "[\"UVM_ERROR count = 1\"]",
+      "counters": "{\"UVM_INFO\": 31, \"UVM_WARNING\": 0, \"UVM_ERROR\": 1, \"UVM_FATAL\": 0, \"verilator_errors\": 0}",
+      "log_path": "results/apb_random_test_3.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    },
+    {
+      "id": 5,
+      "regression_id": 1,
+      "test": "apb_random_test",
+      "uvm_testname": "apb_random_test",
+      "tier": "L1",
+      "seed": 4,
+      "status": "NOT_VERIFIED",
+      "returncode": 0,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": null,
+      "reasons": "[\"UVM summary is clean but $finish was never observed \\u2014 the run did not complete in an orderly way (RT-P-002)\"]",
+      "counters": "{\"UVM_INFO\": 443, \"UVM_WARNING\": 0, \"UVM_ERROR\": 0, \"UVM_FATAL\": 0, \"verilator_errors\": 0}",
+      "log_path": "results/apb_random_test_4.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    },
+    {
+      "id": 6,
+      "regression_id": 1,
+      "test": "apb_random_test",
+      "uvm_testname": "apb_random_test",
+      "tier": "L1",
+      "seed": 5,
+      "status": "FAIL",
+      "returncode": 0,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": "UVM_ERROR tb/apb_pkg.sv(<N>) @<T>: uvm_test_top.env.sb [SB_MISMATCH] read data mismatch at addr <HEX>: expected <HEX>, got <HEX>",
+      "reasons": "[\"UVM_ERROR count = 2\", \"UVM report summary appears 2 times \\u2014 a single run prints it once; evidence is not trustworthy\"]",
+      "counters": "{\"UVM_INFO\": 22, \"UVM_WARNING\": 0, \"UVM_ERROR\": 2, \"UVM_FATAL\": 0, \"verilator_errors\": 0}",
+      "log_path": "results/apb_random_test_5.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    },
+    {
+      "id": 1,
+      "regression_id": 1,
+      "test": "apb_smoke_test",
+      "uvm_testname": "apb_smoke_test",
+      "tier": "L0",
+      "seed": 1,
+      "status": "PASS",
+      "returncode": 0,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": null,
+      "reasons": "[\"UVM report summary present with 0 UVM_ERROR / 0 UVM_FATAL and $finish reached\"]",
+      "counters": "{\"UVM_INFO\": 27, \"UVM_WARNING\": 0, \"UVM_ERROR\": 0, \"UVM_FATAL\": 0, \"verilator_errors\": 0}",
+      "log_path": "results/apb_smoke_test_1.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    },
+    {
+      "id": 9,
+      "regression_id": 1,
+      "test": "apb_smoke_test",
+      "uvm_testname": "apb_smoke_test",
+      "tier": "L0",
+      "seed": 2,
+      "status": "FAIL",
+      "returncode": 1,
+      "duration_s": 0.0,
+      "timed_out": 0,
+      "failure_signature": "%Error: tb/apb_if.sv:<N>: Assertion failed in top.tb_top.u_apb_if.ap_pready_stable: PREADY deasserted before PENABLE fell",
+      "reasons": "[\"verilator reported 1 error(s)\", \"assertion failure observed\", \"non-zero exit code 1\"]",
+      "counters": "{\"UVM_INFO\": 9, \"UVM_WARNING\": 0, \"UVM_ERROR\": 0, \"UVM_FATAL\": 0, \"verilator_errors\": 1}",
+      "log_path": "results/apb_smoke_test_2.log",
+      "wave_path": null,
+      "coverage_path": null,
+      "repro_path": null,
+      "started_utc": "2026-09-20T17:15:07Z"
+    }
+  ],
+  "failure_clusters": [
+    {
+      "id": 1,
+      "signature": "UVM_ERROR tb/apb_pkg.sv(<N>) @<T>: uvm_test_top.env.sb [SB_MISMATCH] read data mismatch at addr <HEX>: expected <HEX>, got <HEX>",
+      "first_seen_utc": "2026-09-20T17:15:07Z",
+      "last_seen_utc": "2026-09-20T17:15:07Z",
+      "occurrences": 3,
+      "example_run": 3,
+      "triage_state": "NEW",
+      "notes": null
+    },
+    {
+      "id": 4,
+      "signature": "NEG_NOT_DETECTED:apb_error_test",
+      "first_seen_utc": "2026-09-20T17:15:07Z",
+      "last_seen_utc": "2026-09-20T17:15:07Z",
+      "occurrences": 1,
+      "example_run": 8,
+      "triage_state": "NEW",
+      "notes": null
+    },
+    {
+      "id": 5,
+      "signature": "%Error: tb/apb_if.sv:<N>: Assertion failed in top.tb_top.u_apb_if.ap_pready_stable: PREADY deasserted before PENABLE fell",
+      "first_seen_utc": "2026-09-20T17:15:07Z",
+      "last_seen_utc": "2026-09-20T17:15:07Z",
+      "occurrences": 1,
+      "example_run": 9,
+      "triage_state": "NEW",
+      "notes": null
+    }
+  ]
+}
