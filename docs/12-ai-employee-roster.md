@@ -48,6 +48,57 @@ For each employee, in this order:
 Do them **one at a time, in wave order.** Build `KEYSTONE` first — it is the
 employee that validates every prompt you write after it.
 
+### One session per employee — never a shared one
+
+Use a **fresh session for every employee.** Sixteen authoring sessions, not one.
+
+- **Context bleed.** In a shared session, employee #9 inherits #1 through #8.
+  APERTURE absorbs BLOODHOUND's failure modes; MERIDIAN picks up TRIBUNAL's
+  evidence language. The specifications blur toward each other, which is the
+  precise opposite of what a roster of distinct mandates needs.
+- **Reproducibility.** Each `EMPLOYEE.md` must be a pure function of
+  (PART A + its BRIEF). In a shared session the output also depends on
+  conversation history, so you cannot regenerate it and get the same file.
+- **Fidelity.** Sixteen full specifications will force a context compaction
+  mid-roster, and the employees written after it get a degraded standard.
+
+`KEYSTONE` being first does **not** mean keeping its session open. KEYSTONE
+guards the others by running in CI once deployed — asynchronously, at push
+time. Nothing about that requires a live session.
+
+### The two things you do carry forward
+
+1. **Corrections to PART A.** Writing KEYSTONE is a shakedown of the standard
+   itself. If PART A produced something wrong or ambiguous, fix PART A in this
+   file, commit it, and use the corrected version for the remaining fifteen.
+   Never carry a fix only in your head.
+2. **An upstream employee's finished spec.** Where one employee consumes
+   another's artifact, ATTACH the upstream `EMPLOYEE.md` as a file to the
+   downstream session — do not rely on a shared conversation. Attaching is
+   explicit, reviewable and reproducible; shared context is none of those.
+
+### Dependency map
+
+| Downstream | Consumes the artifact of | How to supply it |
+|---|---|---|
+| CARTOGRAPHER | ARIADNE (`verification_plan.json`) | Attach ARIADNE's `EMPLOYEE.md` |
+| APERTURE | GENESIS (`LOCK.json`, identity tokens) | Attach GENESIS's `EMPLOYEE.md` |
+| MNEMOSYNE | GENESIS (locks) + APERTURE (prompt sheets) | Attach both |
+| SPLICE | MNEMOSYNE (approved clip set) | Attach MNEMOSYNE's `EMPLOYEE.md` |
+| AEGIS | SPLICE (renders) | Attach SPLICE's, or point at any existing render |
+
+Everything not listed here is independent and needs nothing but PART A and its
+own brief.
+
+> **Ordering correction.** MNEMOSYNE sits in wave 2 but consumes artifacts from
+> GENESIS and APERTURE in wave 4. Two ways to resolve it, pick one:
+> **(a)** write MNEMOSYNE in wave 2 against the lock and prompt-sheet formats
+> you already use on real productions today, and revisit it when GENESIS lands;
+> or **(b)** move MNEMOSYNE to wave 4 and write it directly after APERTURE.
+> Option (b) is cleaner. Option (a) gets you a working QC gate sooner, which is
+> worth more if you are shipping videos in the meantime. AEGIS has the same
+> shape but no real constraint — it can inspect any render you already have.
+
 > **Marker convention.** `<<FILL: ...>>` is a value only you can supply — a real
 > path, a threshold, a destination. Anything not marked is already decided; use it
 > as written.
