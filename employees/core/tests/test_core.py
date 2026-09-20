@@ -201,6 +201,20 @@ class TestArtifact(unittest.TestCase):
                 self.assertFalse(result.valid)
                 self.assertTrue(any(expect in e for e in result.errors), result.errors)
 
+    def test_a_union_type_accepts_every_member(self):
+        """A nullable field is spelled as a list of type names."""
+        schema = {"type": "object", "properties": {"n": {"type": ["integer", "null"]}}}
+        for value in (3, None):
+            with self.subTest(value=value):
+                self.assertTrue(validate({"n": value}, schema).valid)
+        result = validate({"n": "three"}, schema)
+        self.assertFalse(result.valid)
+        self.assertTrue(any("integer/null" in e for e in result.errors), result.errors)
+
+    def test_a_boolean_is_not_an_integer(self):
+        schema = {"type": "object", "properties": {"n": {"type": "integer"}}}
+        self.assertFalse(validate({"n": True}, schema).valid)
+
     def test_reports_which_validator_ran(self):
         result = validate(GOOD, SCHEMA)
         self.assertIn(result.validator, {"jsonschema", "structural-fallback"})
