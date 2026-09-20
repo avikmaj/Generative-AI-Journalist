@@ -77,7 +77,8 @@ For per-platform copy-paste setup cards (name, objective, instructions, upload l
 
 To build AI employees from the agent definitions across the four repositories, see
 [docs/12-ai-employee-roster.md](docs/12-ai-employee-roster.md), whose specifications
-conform to the template in `avikmaj/universal-master-prompt-library`.
+conform to the template in `avikmaj/universal-master-prompt-library`. To run the
+sixteen that exist, see [docs/13-ai-employee-user-guide.md](docs/13-ai-employee-user-guide.md).
 
 ## Skill index
 
