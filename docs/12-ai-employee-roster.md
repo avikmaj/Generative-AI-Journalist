@@ -313,6 +313,18 @@ employees/
 - Never invent an input path, API, or credential. If the brief did not give you
   one, emit a `<<FILL: ...>>` marker and list it under an OPEN QUESTIONS heading
   at the end.
+- The brief may instead supply a value as `<<ASSUMED: value>>`. That value is a
+  working default chosen for you, not a verified fact. Use it as the real value
+  throughout the document — write it into paths, triggers, budgets and schema
+  exactly as given — AND list every one under a `## STATED ASSUMPTIONS` heading
+  placed after OPEN QUESTIONS, in the form:
+      - <section> — <the assumed value> — change here if it does not match.
+  This separation is the point: the specification is complete and runnable, and
+  every unverified premise in it is visible in one list. An assumption silently
+  absorbed into prose is indistinguishable from a fact, which is the failure
+  this rule exists to prevent.
+- `## OPEN QUESTIONS` and `## STATED ASSUMPTIONS` both follow section 14 and
+  neither counts as a numbered section. Write `None.` under either if empty.
 - Model default: claude-opus-5 for reasoning and judgement steps,
   claude-haiku-4-5 for classification-shaped subcalls. State which steps use
   which. Use these exact model IDs — they are complete as written and must never
@@ -407,6 +419,34 @@ Do not skip ahead. Each wave de-risks the next.
 | **4** | GENESIS, APERTURE, SPLICE, CRUCIBLE | Per-run cost cap agreed and enforced |
 
 ---
+
+## 3b. The five environment variables
+
+Every assumed path in the briefs is rooted in one of five variables rather than
+an absolute path. Setting these five is the whole of the filesystem
+configuration; nothing else needs a path.
+
+| Variable | What it points at | Used by |
+|---|---|---|
+| `GITHUB_WORKSPACE` | CI checkout root — supplied by the runner, you set nothing | KEYSTONE |
+| `DV_ROOT` | Your verification project tree | BLOODHOUND, TRIBUNAL, ARIADNE, CARTOGRAPHER |
+| `STUDIO_ROOT` | Your film and channel production tree | HERALD, AEGIS, MNEMOSYNE, SPLICE |
+| `CHANNEL_ROOT` | Channel analytics exports, when not using the API | AUGUR |
+| `DILIGENCE_ROOT` | Data-room exports, when a deal has one | CRUCIBLE |
+
+Six small config files carry the rest, and each is written once:
+`config/argus/competitors.yaml`, `config/argus/positioning.md`,
+`config/herald/cta-block.md`, `config/brand/tokens.yaml`,
+`config/meridian/watchlist.yaml`, `config/studio/model-costs.yaml`.
+
+Three assumptions are choices rather than paths, and are the ones most likely to
+be wrong for you. Each appears in exactly one place per brief:
+
+| Assumption | Default | Change it if |
+|---|---|---|
+| Simulator | **Questa** | You run VCS or Xcelium — affects BLOODHOUND's log parsing and CARTOGRAPHER's coverage format |
+| Video generators | **Seedance and Veo** | You use Kling, Sora, Runway or Pika — affects APERTURE's per-model adaptation |
+| Market data | **Web search only** | You have a paid feed — affects MERIDIAN and CRUCIBLE |
 
 ## 4. Employee briefs
 
@@ -510,8 +550,8 @@ TRIGGER
 - Suggested weekly: `0 2 * * 1` UTC.
 
 INPUTS
-- The four repository working trees. Paths: <<FILL: local or CI checkout paths>>
-- Last recorded golden-set score: <<FILL: path to score history file>>
+- The four repository working trees. Paths: <<ASSUMED: ${GITHUB_WORKSPACE}/repos/<repo-name>/ — one actions/checkout step per repository with an explicit path:>>
+- Last recorded golden-set score: <<ASSUMED: state/golden-set-history.jsonl in the hub repo; absent on the first run, which records a baseline instead of a regression>>
 
 OUTPUT ARTIFACT
 - `reports/keystone/<date>.json` plus a GitHub issue per NEW drift finding.
@@ -522,7 +562,7 @@ OUTPUT ARTIFACT
 
 BLAST RADIUS
 - Read-only on all four repos. May file and update GitHub issues in
-  <<FILL: which repo should hold drift issues?>>. Must never modify a skill file.
+  <<ASSUMED: avikmaj/Generative-AI-Journalist>>. Must never modify a skill file.
 
 BUDGETS
 - tokens 150000 · tool_calls 60 · USD 1.50 per run.
@@ -625,9 +665,9 @@ TRIGGER
 - Daily. Suggested `0 1 * * *` UTC (06:30 IST).
 
 INPUTS
-- Competitor channel list: <<FILL: 5-15 channel handles/IDs>>
-- Own back catalogue for dedupe: <<FILL: path to published-videos list, or use YouTube connector>>
-- Channel positioning statement: <<FILL: one paragraph on what this channel is and is not>>
+- Competitor channel list: <<ASSUMED: config/argus/competitors.yaml — a list of channel handles you populate once>>
+- Own back catalogue for dedupe: <<ASSUMED: YouTube Data API via the connected account, cached at state/argus/published.json>>
+- Channel positioning statement: <<ASSUMED: config/argus/positioning.md>>
 
 OUTPUT ARTIFACT
 - `reports/argus/topics-<date>.json`
@@ -715,12 +755,12 @@ EXISTING SOURCE TO BUILD ON
 - .claude/agents/yt-video-optimization-specialist.md
 
 TRIGGER
-- File-arrival: a new entry in <<FILL: path where a finished/near-finished video is registered>>
+- File-arrival: a new entry in <<ASSUMED: ${STUDIO_ROOT}/pipeline/ready/ — a new subdirectory is a new video>>
 - Plus manual invocation for re-optimising an existing video.
 
 INPUTS
-- Video subject, script or transcript: <<FILL: path>>
-- Channel's standard link/CTA block: <<FILL: path or paste>>
+- Video subject, script or transcript: <<ASSUMED: ${STUDIO_ROOT}/pipeline/ready/<video_id>/transcript.txt>>
+- Channel's standard link/CTA block: <<ASSUMED: config/herald/cta-block.md>>
 - Existing catalogue for cluster alignment and cannibalisation check.
 
 OUTPUT ARTIFACT
@@ -811,7 +851,7 @@ TRIGGER
 
 INPUTS
 - YouTube Analytics for the trailing 90 days.
-  Source: <<FILL: YouTube connector, or exported CSV path>>
+  Source: <<ASSUMED: YouTube Analytics API via the connected account; falls back to ${CHANNEL_ROOT}/analytics/*.csv>>
 - Prior week's AUGUR report, to check whether last week's actions were taken
   and what happened.
 
@@ -910,13 +950,13 @@ EXISTING SOURCE TO BUILD ON
 
 TRIGGER
 - After the nightly regression completes. Suggested `0 22 * * *` UTC, or better,
-  on completion signal from <<FILL: how does the regression announce it is done?>>
+  on completion signal from <<ASSUMED: a sentinel file ${DV_ROOT}/regression/nightly/<YYYY-MM-DD>/DONE written by the regression runner>>
 
 INPUTS
-- Log directory: <<FILL: path and directory layout>>
-- Log format / simulator: <<FILL: VCS | Xcelium | Questa, and log conventions>>
-- Run manifest (test, seed, config, commit): <<FILL: path/format>>
-- Historical cluster database for recurrence: <<FILL: path, or state that this run creates it>>
+- Log directory: <<ASSUMED: ${DV_ROOT}/regression/nightly/<YYYY-MM-DD>/<test>/<seed>/sim.log>>
+- Log format / simulator: <<ASSUMED: Questa; log conventions per its transcript format>>
+- Run manifest (test, seed, config, commit): <<ASSUMED: ${DV_ROOT}/regression/nightly/<YYYY-MM-DD>/manifest.json>>
+- Historical cluster database for recurrence: <<ASSUMED: state/bloodhound/clusters.jsonl, created by the first run>>
 
 OUTPUT ARTIFACT
 - `reports/bloodhound/<run_id>.json` + one GitHub issue per NEW cluster.
@@ -927,7 +967,7 @@ OUTPUT ARTIFACT
 
 BLAST RADIUS
 - Read-only on logs and RTL/TB. May file and update issues in
-  <<FILL: repo>>. Must never modify a test, a filter, or a seed list.
+  <<ASSUMED: avikmaj/DESIGN_VERIFICATION_SOLUTIONS>>. Must never modify a test, a filter, or a seed list.
 - HARD RULE: must never skip, disable, quarantine or waive a test. Ever.
 
 BUDGETS
@@ -1019,9 +1059,9 @@ TRIGGER
 - Plus a weekly sweep of all open VIPs: 0 4 * * 2 UTC
 
 INPUTS
-- VIP tree root: <<FILL: path>>
+- VIP tree root: <<ASSUMED: ${DV_ROOT}/vip/<protocol>/>>
 - Gate definitions and templates: skills/dv/vip-factory/assets/templates/
-- Claimed evidence bundle: <<FILL: path/format of result.json and coverage db>>
+- Claimed evidence bundle: <<ASSUMED: ${DV_ROOT}/vip/<protocol>/result.json plus ${DV_ROOT}/vip/<protocol>/coverage/merged.ucdb>>
 
 OUTPUT ARTIFACT
 - `reports/tribunal/<vip>-gate<N>.json` + a status comment on the relevant PR/issue.
@@ -1115,12 +1155,12 @@ EXISTING SOURCE TO BUILD ON
 - AVIK-STUDIO-MTEAM.../agents/qc-supervisor.md (pre-flight gate)
 
 TRIGGER
-- File-arrival: a render lands in <<FILL: path to the pre-publish directory>>
+- File-arrival: a render lands in <<ASSUMED: ${STUDIO_ROOT}/pipeline/pre-publish/>>
 
 INPUTS
-- Rendered video or frame set: <<FILL: path and format>>
-- Brand token definition: <<FILL: path, or paste the gold hex, fonts, placement rules>>
-- Required disclosure text: <<FILL: exact wording>>
+- Rendered video or frame set: <<ASSUMED: ${STUDIO_ROOT}/pipeline/pre-publish/<asset_id>/master-16x9.mp4 and master-9x16.mp4>>
+- Brand token definition: <<ASSUMED: config/brand/tokens.yaml>>
+- Required disclosure text: <<ASSUMED: "Contains AI-generated content.">>
 
 OUTPUT ARTIFACT
 - `reports/aegis/<asset_id>.json`
@@ -1209,13 +1249,13 @@ EXISTING SOURCE TO BUILD ON
 - AVIK-STUDIO-MTEAM.../skills/dailies/
 
 TRIGGER
-- File-arrival: a batch of clips lands in <<FILL: path to dailies directory>>
+- File-arrival: a batch of clips lands in <<ASSUMED: ${STUDIO_ROOT}/productions/<slug>/dailies/<scene_id>/>>
 
 INPUTS
-- Clip batch: <<FILL: path, naming convention that maps clip to shot ID>>
+- Clip batch: <<ASSUMED: same directory; clips named <scene_id>_<shot_id>_take<NN>.mp4>>
 - Production locks from GENESIS: character bible, world lock, style guide.
   Path: <<FILL>>
-- Shot prompt sheets from APERTURE: <<FILL: path>>
+- Shot prompt sheets from APERTURE: <<ASSUMED: ${STUDIO_ROOT}/productions/<slug>/scenes/<scene_id>/PROMPTS.json>>
 
 OUTPUT ARTIFACT
 - `reports/mnemo/<scene_id>.json`
@@ -1312,10 +1352,10 @@ TRIGGER
 - On change to the spec directory, plus weekly: 0 5 * * 3 UTC
 
 INPUTS
-- Spec/architecture documents: <<FILL: path and formats — PDF? Markdown? Word?>>
-- Existing vplan: <<FILL: path, or state that this creates the first one>>
-- Test source tree: <<FILL: path>>
-- Coverage model: <<FILL: path>>
+- Spec/architecture documents: <<ASSUMED: ${DV_ROOT}/specs/ — Markdown and PDF>>
+- Existing vplan: <<ASSUMED: ${DV_ROOT}/dv/verification_plan.json, created by the first run when absent>>
+- Test source tree: <<ASSUMED: ${DV_ROOT}/dv/tests/>>
+- Coverage model: <<ASSUMED: ${DV_ROOT}/dv/coverage/>>
 
 OUTPUT ARTIFACT
 - `verification_plan.json` + `reports/ariadne/rtm-diff-<date>.json`
@@ -1408,10 +1448,10 @@ TRIGGER
   or `0 23 * * *` UTC.
 
 INPUTS
-- Coverage database: <<FILL: path and tool — VCS urg? Questa ucdb? Xcelium?>>
+- Coverage database: <<ASSUMED: ${DV_ROOT}/coverage/merged.ucdb — Questa>>
 - Vplan from ARIADNE: `verification_plan.json`
-- Configuration matrix (which configs were actually run): <<FILL: path>>
-- Constraint source: <<FILL: path to the constraint files>>
+- Configuration matrix (which configs were actually run): <<ASSUMED: ${DV_ROOT}/regression/config-matrix.yaml>>
+- Constraint source: <<ASSUMED: ${DV_ROOT}/dv/env/ and ${DV_ROOT}/dv/tests/>>
 
 OUTPUT ARTIFACT
 - `reports/cartographer/<date>.json`
@@ -1499,12 +1539,12 @@ EXISTING SOURCE TO BUILD ON
 
 TRIGGER
 - Manual / on-demand per company. Optionally a watchlist refresh:
-  <<FILL: cron if you keep a watchlist, e.g. 0 6 * * 1 UTC>>
+  <<ASSUMED: 0 6 * * 1 UTC>>
 
 INPUTS
 - Company or ticker: run parameter.
-- Data sources permitted: <<FILL: which APIs/feeds, or web search only?>>
-- Your watchlist, if any: <<FILL: path>>
+- Data sources permitted: <<ASSUMED: web search only; no paid market-data feed>>
+- Your watchlist, if any: <<ASSUMED: config/meridian/watchlist.yaml>>
 
 OUTPUT ARTIFACT
 - `reports/meridian/<ticker>-<date>.json` + a Markdown research note.
@@ -1715,9 +1755,9 @@ TRIGGER
 
 INPUTS
 - Premise: one line to one paragraph.
-- Format: <<FILL: short / episode / Shorts / trailer, and target runtime>>
-- Channel constraints: <<FILL: series bible or format lock if this is a series>>
-- Budget ceiling for the production: <<FILL: max clips or max USD>>
+- Format: <<ASSUMED: run parameter; default long-form 16:9 at 8-12 minutes>>
+- Channel constraints: <<ASSUMED: config/studio/series-bible.md when present, otherwise none>>
+- Budget ceiling for the production: <<ASSUMED: 60 clips or USD 40 per production, whichever binds first>>
 
 OUTPUT ARTIFACT
 - `productions/<slug>/LOCK.json` + human-readable bible Markdown.
@@ -1815,8 +1855,8 @@ TRIGGER
 INPUTS
 - `productions/<slug>/LOCK.json`
 - Scene identifier and its script pages.
-- Target generator(s): <<FILL: which models are you actually using — Seedance? Veo? Kling?>>
-- Cost per clip per model: <<FILL: so the estimate is real>>
+- Target generator(s): <<ASSUMED: Seedance and Veo>>
+- Cost per clip per model: <<ASSUMED: config/studio/model-costs.yaml>>
 
 OUTPUT ARTIFACT
 - `productions/<slug>/scenes/<scene_id>/PROMPTS.json` + a paste-ready sheet.
@@ -1910,10 +1950,10 @@ TRIGGER
 - File-arrival: MNEMOSYNE marks a scene's clips all APPROVED.
 
 INPUTS
-- Approved clip set + MNEMOSYNE report: <<FILL: path>>
-- Transcript for captions: <<FILL: path or generated how?>>
-- Brand assets (watermark, stings, fonts): <<FILL: path>>
-- Music/audio bed: <<FILL: path and licence status>>
+- Approved clip set + MNEMOSYNE report: <<ASSUMED: ${STUDIO_ROOT}/productions/<slug>/dailies/<scene_id>/ plus reports/mnemo/<scene_id>.json>>
+- Transcript for captions: <<ASSUMED: generated by Whisper from the assembled audio and cached beside the cut>>
+- Brand assets (watermark, stings, fonts): <<ASSUMED: config/brand/assets/>>
+- Music/audio bed: <<ASSUMED: ${STUDIO_ROOT}/audio/licensed/, every track carrying a LICENCE.txt; a track without one is never used>>
 
 OUTPUT ARTIFACT
 - `productions/<slug>/deliverables/<cut>-16x9.mp4`, `-9x16.mp4`
@@ -1926,7 +1966,7 @@ BLAST RADIUS
   YouTube. Output goes to AEGIS for the brand gate first, always.
 
 BUDGETS
-- tokens 150000 · tool_calls 60 · USD 3.00 + <<FILL: render compute cap>>.
+- tokens 150000 · tool_calls 60 · USD 3.00 + <<ASSUMED: 45 minutes wall clock>>.
   Render time is the real cost here — set a wall-clock ceiling too.
 
 IDEMPOTENCY
@@ -2009,7 +2049,7 @@ TRIGGER
 
 INPUTS
 - Target company / deal terms: run parameters.
-- Document set: <<FILL: path to filings, data room exports, or "public only">>
+- Document set: <<ASSUMED: public filings via web search only, unless a data-room export is placed at ${DILIGENCE_ROOT}/<deal_slug>/>>
 - Your thesis, so CRUCIBLE knows what to attack: <<FILL>>
 
 OUTPUT ARTIFACT

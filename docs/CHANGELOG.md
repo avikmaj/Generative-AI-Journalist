@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.0.0
+
+Every brief is now complete and paste-ready.
+
+### Added
+
+- A second marker form. `<<ASSUMED: value>>` supplies a working default that the
+  specification uses as its real value, and that must also be listed under a
+  `## STATED ASSUMPTIONS` heading. `<<FILL: ...>>` continues to mean unknown and
+  still returns under OPEN QUESTIONS. The separation keeps a specification
+  runnable while leaving every unverified premise visible in one list, rather
+  than absorbed into prose where it reads as fact.
+- `## 3b. The five environment variables`. Every assumed path is rooted in one
+  of five variables instead of an absolute path, so configuring the filesystem
+  means setting five values and writing six small config files.
+
+### Changed
+
+- All forty-six remaining markers are now stated assumptions. No brief requires
+  anything to be supplied before it can be pasted.
+- Three assumptions are choices rather than paths and are called out separately,
+  since they are the ones most likely to be wrong: Questa as the simulator,
+  Seedance and Veo as the generators, and web search as the only market-data
+  source. Each appears in exactly one place per brief.
+
 ## 1.4.0
 
 Briefs resolved as far as the repositories allow.
