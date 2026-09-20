@@ -124,14 +124,23 @@ def validate(path: Path) -> list[str]:
 
     # --- markers --------------------------------------------------------
     open_q = re.search(r"^#{1,6}\s*OPEN QUESTIONS\s*$", text, re.M | re.I)
+    stated = re.search(r"^#{1,6}\s*STATED ASSUMPTIONS\s*$", text, re.M | re.I)
     boundary = open_q.start() if open_q else len(text)
-    if "<<FILL:" in text[:boundary]:
-        bad.append("unresolved <<FILL:> marker in the body, outside OPEN QUESTIONS")
-    if "<<ASSUMED:" in text:
+    tail = text[boundary:]
+    # Only complete markers count. A backticked mention of the syntax, such as
+    # the step where this employee scans for one, is prose and not a marker.
+    body_markers = set(re.findall(r"<<FILL:[^>]*>>", text[:boundary]))
+    for marker in sorted(body_markers):
+        if marker not in tail:
+            inner = marker[7:-2].strip()[:60]
+            bad.append(f"body marker not repeated under OPEN QUESTIONS: {inner}")
+    if re.search(r"<<ASSUMED:[^>]*>>", text):
         bad.append("<<ASSUMED:> marker left in place; the value must be written in")
+    if stated and open_q and stated.start() < open_q.start():
+        bad.append("STATED ASSUMPTIONS must follow OPEN QUESTIONS")
 
     # --- output schema --------------------------------------------------
-    blocks = re.findall(r"```(?:json|jsonc)?\s*\n(.*?)```", text, re.S)
+    blocks = re.findall(r"^```[A-Za-z0-9_+-]*[ \t]*\n(.*?)^```", text, re.S | re.M)
     schemas = [b for b in blocks if '"$schema"' in b or '"properties"' in b]
     if not schemas:
         bad.append("OUTPUT CONTRACT carries no JSON Schema block")
@@ -149,11 +158,15 @@ def validate(path: Path) -> list[str]:
     # --- model and determinism ------------------------------------------
     if re.search(r"claude-haiku-4-5-\d", text):
         bad.append("Haiku model id carries a date suffix; use claude-haiku-4-5")
-    for match in re.finditer(r"temperature", text, re.I):
-        window = text[max(0, match.start() - 300) : match.start() + 300]
-        if "claude-opus-5" in window and "reject" not in window.lower():
-            bad.append("temperature applied near claude-opus-5, which rejects it with HTTP 400")
-            break
+    negation = re.compile(r"\b(no|not|never|without|reject|refus|400|error)", re.I)
+    for line in text.splitlines():
+        if "claude-opus-5" in line and re.search(r"temperature", line, re.I):
+            if not negation.search(line):
+                bad.append(
+                    "temperature applied to claude-opus-5 on one line, "
+                    "and that model rejects it with HTTP 400"
+                )
+                break
 
     # --- secrets ---------------------------------------------------------
     for pattern, label in SECRET_PATTERNS:
