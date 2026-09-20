@@ -77,6 +77,44 @@ time. Nothing about that requires a live session.
    downstream session — do not rely on a shared conversation. Attaching is
    explicit, reviewable and reproducible; shared context is none of those.
 
+### Can sessions run in parallel?
+
+Yes — with one gate and one limit.
+
+**The gate: KEYSTONE finishes alone, first.** Writing it is a shakedown of
+PART A itself. If PART A has a defect, you want to find it in one specification,
+not in eight you then have to rewrite. Do not start anything else until
+KEYSTONE's `EMPLOYEE.md` is written, read and judged good.
+
+**After that, run the independent ones concurrently.** Eleven employees have no
+upstream at all and cannot interfere with each other — separate sessions,
+separate output paths, no shared state, no merge conflicts:
+
+```
+ARGUS   HERALD   AUGUR   BLOODHOUND   TRIBUNAL   ARIADNE
+MERIDIAN   QUORUM   GENESIS   CRUCIBLE   AEGIS
+```
+
+**The chains must stay serial.** Each needs the one before it finished and
+attached:
+
+```
+ARIADNE ──► CARTOGRAPHER
+GENESIS ──► APERTURE ──► MNEMOSYNE ──► SPLICE
+```
+
+**The limit is you, not the tool.** Every session hands you a specification to
+fill markers for and actually read. Three or four concurrent is the practical
+ceiling for one person; beyond that you are rubber-stamping, and an unread
+specification is worse than no specification — it looks like a decision and is
+not one. There is no prize for finishing the roster in a weekend.
+
+Two things that genuinely go wrong in parallel: filling markers in a hurry
+across several briefs at once and transposing a path between two of them, and
+discovering a PART A improvement in session 3 that sessions 1, 2 and 4 did not
+get. If you find a PART A fix mid-batch, finish the in-flight sessions, patch
+PART A, and note which specifications predate the fix.
+
 ### Dependency map
 
 | Downstream | Consumes the artifact of | How to supply it |
