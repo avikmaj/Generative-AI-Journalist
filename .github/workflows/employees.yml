@@ -1,13 +1,17 @@
 name: employees
 
 on:
+  # On branches, the pull_request trigger covers it; listing push without a
+  # branch filter runs both gates twice for every push to an open PR.
   push:
+    branches: [main]
     paths: ["employees/**", "scripts/validate_employees.py", "scripts/extract_employee_schemas.py"]
   pull_request:
     paths: ["employees/**", "scripts/validate_employees.py", "scripts/extract_employee_schemas.py"]
 
 jobs:
-  validate:
+  employee-specs:
+    name: Employee specifications
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
