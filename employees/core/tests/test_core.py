@@ -322,3 +322,36 @@ class TestRun(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestScaffolding(unittest.TestCase):
+    """The base every employee runner will share."""
+
+    def setUp(self):
+        from employees.core import Deduction, EmployeeRunner
+        self.Deduction = Deduction
+        self.runner = EmployeeRunner.__new__(EmployeeRunner)
+
+    def test_a_deduction_applies_per_occurrence_and_respects_its_cap(self):
+        d = self.Deduction("role matched by model", 0.02, cap=0.10)
+        d.count = 3
+        self.assertAlmostEqual(d.applied, 0.06)
+        d.count = 20
+        self.assertAlmostEqual(d.applied, 0.10, msg="the cap must bind")
+
+    def test_worst_case_sums_the_caps_not_the_amounts(self):
+        ds = [self.Deduction("a", 0.02, cap=0.10), self.Deduction("b", 0.03, cap=0.12)]
+        self.assertAlmostEqual(self.runner.worst_case_confidence(ds), 0.78)
+
+    def test_a_cap_that_lands_on_the_threshold_is_visible(self):
+        """The standard's rule: a saturated cap must not sit on the boundary.
+
+        0.10 against a 0.90 threshold lands exactly on it, which an exclusive
+        comparison would let through. The helper exists so an author can see
+        that before shipping; the inclusive comparison is what makes it safe.
+        """
+        ds = [self.Deduction("only", 0.02, cap=0.10)]
+        worst = self.runner.worst_case_confidence(ds)
+        self.assertAlmostEqual(worst, 0.90)
+        self.assertTrue(worst <= 0.90, "inclusive comparison must catch the boundary")
+        self.assertFalse(worst < 0.90, "an exclusive comparison would let it through")

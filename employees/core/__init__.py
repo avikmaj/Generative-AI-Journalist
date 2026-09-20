@@ -26,11 +26,12 @@ from .errors import (
 from .redact import Redactor, find_credentials
 from .retry import call_with_retry
 from .run import Run
+from .runner import Deduction, EmployeeRunner, Outcome
 from .runrecord import RunRecord, Status, fingerprint, prompt_sha, today, utcnow
 from .trace import Trace
 
 __all__ = [
-    "Allowlist", "ArtifactInvalid", "BlastRadiusViolation", "Budget",
+    "Allowlist", "ArtifactInvalid", "Deduction", "EmployeeRunner", "Outcome", "BlastRadiusViolation", "Budget",
     "BudgetExceeded", "CoreError", "Escalation", "LivenessExceeded",
     "Redactor", "RetriesExhausted", "Run", "RunRecord", "SensitiveDataInInput",
     "Status", "Trace", "ValidationResult", "call_with_retry", "canonical",
