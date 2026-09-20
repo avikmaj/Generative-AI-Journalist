@@ -1,0 +1,131 @@
+{
+  "slug": "the-quiet-lab",
+  "scene_id": "SC-04",
+  "cut": "v2",
+  "approval_path": "reports/mnemo/2026-09-20.json",
+  "clips": [
+    {
+      "clip_id": "SC04-SH01-t1",
+      "in_s": 0.0,
+      "out_s": 4.8,
+      "reason": "establishing wide, full take",
+      "mnemo_verdict": "APPROVED",
+      "filename": "SC04-SH01-t1.mp4"
+    },
+    {
+      "clip_id": "SC04-SH02-t2",
+      "in_s": 0.4,
+      "out_s": 3.9,
+      "reason": "trim the first four frames of hand entry",
+      "mnemo_verdict": "APPROVED",
+      "filename": "SC04-SH02-t2.mp4"
+    },
+    {
+      "clip_id": "SC04-SH03-t1",
+      "in_s": 0.0,
+      "out_s": 5.2,
+      "reason": "full take",
+      "mnemo_verdict": "APPROVED",
+      "filename": "SC04-SH03-t1.mp4"
+    },
+    {
+      "clip_id": "SC04-SH04-t3",
+      "in_s": 0.6,
+      "out_s": 4.4,
+      "reason": "trim in on the jacket reveal",
+      "mnemo_verdict": "REJECT",
+      "filename": "SC04-SH04-t3.mp4"
+    }
+  ],
+  "text_elements": [
+    {
+      "type": "title_card",
+      "content": "THE QUIET LAB",
+      "frames": {
+        "start": 0,
+        "end": 36
+      },
+      "source": "supplied_title",
+      "rendered_as_real_text": true
+    },
+    {
+      "type": "lower_third",
+      "content": "ARI - verification engineer",
+      "frames": {
+        "start": 120,
+        "end": 200
+      },
+      "source": "transcript_cue",
+      "rendered_as_real_text": true
+    },
+    {
+      "type": "watermark",
+      "content": "WonderCraft AI",
+      "frames": {
+        "start": 24,
+        "end": 440
+      },
+      "source": "brand_token",
+      "rendered_as_real_text": true
+    },
+    {
+      "type": "end_subscribe_sting",
+      "content": "Subscribe. The operator approves this cut.",
+      "frames": {
+        "start": 400,
+        "end": 440
+      },
+      "source": "brand_token",
+      "rendered_as_real_text": true
+    }
+  ],
+  "captions": {
+    "path": "captions/SC-04-v3.srt",
+    "cues": [
+      {
+        "drift_ms": 18
+      },
+      {
+        "drift_ms": 42
+      },
+      {
+        "drift_ms": 260
+      },
+      {
+        "drift_ms": 90
+      },
+      {
+        "drift_ms": 31
+      },
+      {
+        "drift_ms": 205
+      }
+    ]
+  },
+  "music": [
+    {
+      "track_id": "bed-01",
+      "path": "audio/bed-01.wav",
+      "licence_path": "audio/licences/bed-01.pdf",
+      "licence_sha256": "0a4559d4714f2f0644e195c4425e70266d77f18b2c12b016ed48e2dbe22ee747"
+    }
+  ],
+  "renders": [
+    {
+      "aspect": "9x16",
+      "path": "renders/SC-04-v3-9x16.mp4",
+      "sha256": "82f3e9c695dc6b8d1b11818d5701919e286de8d47f7c3eb3100c485f79e57828",
+      "duration_s": 17.3,
+      "size_bytes": 24118400,
+      "checked": true
+    },
+    {
+      "aspect": "16x9",
+      "path": "renders/SC-04-v3-16x9.mp4",
+      "sha256": "db77fd01af957221a4989b64b3770a83a3c56068405b9f0e9408feae57fd17e4",
+      "duration_s": 17.3,
+      "size_bytes": 31457280,
+      "checked": false
+    }
+  ]
+}

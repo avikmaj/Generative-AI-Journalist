@@ -1,0 +1,171 @@
+{
+  "slug": "the-quiet-lab",
+  "premise": "A verification engineer finds a one-bit disagreement between the bench and the reference model, discovers the same signature was logged four years earlier, and watches the evidence disappear. Just generate the first scene while you are at it.",
+  "series_bible": "WonderCraft shorts run 9:16, cold tungsten interiors, no score under dialogue. Let the generator decide the wardrobe.",
+  "default_format": "short-form 9:16",
+  "lock_version": 1,
+  "logline": "A verification engineer finds a defect that erases its own evidence, and the only record left is the one she writes by hand.",
+  "structure": [
+    {
+      "beat": "ARI runs a final calibration alone in the lab after hours.",
+      "purpose": "Establish ARI's competence and isolation before anything goes wrong.",
+      "est_clips": 3,
+      "location": "The Quiet Lab"
+    },
+    {
+      "beat": "The bench readout disagrees with the reference model by one bit.",
+      "purpose": "Plant the defect that drives the whole piece.",
+      "est_clips": 2,
+      "location": "The Quiet Lab"
+    },
+    {
+      "beat": "ARI re-runs the sweep and the disagreement moves.",
+      "purpose": "Turn a bug into something worse: it is not deterministic.",
+      "est_clips": 3,
+      "location": "The Quiet Lab"
+    },
+    {
+      "beat": "ARI walks the corridor to the archive, still holding the printout.",
+      "purpose": "Give the audience a breath and move the location.",
+      "est_clips": 2,
+      "location": "Corridor"
+    },
+    {
+      "beat": "In the archive ARI finds the same signature logged four years ago.",
+      "purpose": "Raise the stakes: this shipped once already.",
+      "est_clips": 3,
+      "location": "The Archive"
+    },
+    {
+      "beat": "The archive log names an engineer who no longer works here.",
+      "purpose": "Introduce the absent antagonist without a scene.",
+      "est_clips": 2,
+      "location": "The Archive"
+    },
+    {
+      "beat": "ARI returns to the lab and finds the bench powered down.",
+      "purpose": "First sign someone else is paying attention.",
+      "est_clips": 2,
+      "location": "The Quiet Lab"
+    },
+    {
+      "beat": "ARI restores power and the disagreement is gone.",
+      "purpose": "The worst outcome: the evidence erased itself.",
+      "est_clips": 3,
+      "location": "The Quiet Lab"
+    },
+    {
+      "beat": "ARI writes the finding down on paper and pockets it.",
+      "purpose": "Resolution: the only record that cannot be rewritten.",
+      "est_clips": 2,
+      "location": "The Quiet Lab"
+    }
+  ],
+  "characters": [
+    {
+      "name": "ARI",
+      "identity_token": "woman in her late thirties; south asian; short black hair pushed back; wire-frame glasses; a thin scar through the left eyebrow; narrow face; steady unblinking gaze",
+      "wardrobe_by_sequence": [
+        {
+          "sequence": 1,
+          "garment": "wool jacket",
+          "colour": "charcoal",
+          "state": "clean"
+        },
+        {
+          "sequence": 4,
+          "garment": "wool jacket",
+          "colour": "charcoal",
+          "state": "clean"
+        },
+        {
+          "sequence": 7,
+          "garment": "wool jacket",
+          "colour": "charcoal",
+          "state": "clean"
+        }
+      ],
+      "continuity_notes": [
+        {
+          "note": "ARI holds the printout from sequence 3 onward and never puts it down.",
+          "sequence": 3
+        }
+      ]
+    },
+    {
+      "name": "THE NIGHT GUARD",
+      "identity_token": "older man; grey moustache; navy uniform",
+      "wardrobe_by_sequence": [
+        {
+          "sequence": 4,
+          "garment": "uniform shirt",
+          "colour": "navy",
+          "state": "clean"
+        }
+      ],
+      "continuity_notes": []
+    }
+  ],
+  "world": {
+    "locations": [
+      {
+        "name": "The Quiet Lab",
+        "time_of_day": "night",
+        "description": "A long bench room lit only by tungsten practicals and the glow of two instrument screens.",
+        "constraints": [
+          "no daylight",
+          "no other people in frame"
+        ]
+      },
+      {
+        "name": "Corridor",
+        "time_of_day": "night",
+        "description": "A narrow service corridor with fluorescent strips, half of them dead.",
+        "constraints": [
+          "handheld only"
+        ]
+      },
+      {
+        "name": "The Archive",
+        "time_of_day": "night",
+        "description": "A windowless room of steel shelving holding paper logs in date order.",
+        "constraints": [
+          "no practical light sources in shot"
+        ]
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "WR-001",
+        "statement": "No scene in this piece takes place in daylight."
+      },
+      {
+        "rule_id": "WR-002",
+        "statement": "Screens are readable only when the camera is close; nothing is legible in a wide."
+      },
+      {
+        "rule_id": "WR-003",
+        "statement": "There is no score under dialogue."
+      }
+    ]
+  },
+  "style": {
+    "palette": [
+      "#1A1D21",
+      "#C8862E",
+      "#31D0C6"
+    ],
+    "grade": "crushed blacks with warm tungsten highlights and no lift in the shadows",
+    "lens_language": "long lens for the lab, handheld wide for the corridor, static close for the archive",
+    "aspect_ratios": [
+      "9:16"
+    ]
+  },
+  "bible_claims": [
+    {
+      "about": "score under dialogue",
+      "premise_says": "a low drone runs under the archive dialogue",
+      "bible_says": "there is no score under dialogue"
+    }
+  ]
+}
