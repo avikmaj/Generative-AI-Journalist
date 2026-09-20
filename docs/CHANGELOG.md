@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.2.0
+
+Two more lessons from the second KEYSTONE audit, carried into the standard.
+
+### Added
+
+- A rule on capped deductions. A cap set to exactly the distance between 1.00
+  and the escalation threshold puts the fully saturated case precisely on the
+  line, which is the one value an exclusive comparison lets through. The first
+  regeneration fixed the penalty that caused this and reintroduced it via a cap.
+- A rule that the adversarial guarantee belongs in the output schema. Every
+  brief promises the verdict is unchanged under injection; that promise must be
+  pinned by a schema constraint so an artifact claiming otherwise is invalid,
+  rather than merely contradicted by a sentence elsewhere.
+
+### Changed
+
+- The comparison-operator rule now says to copy the operator from the brief's
+  RESOLVED block verbatim, including into the TESTS table, where a clean run's
+  confidence is then strictly greater than the threshold.
+
 ## 2.1.0
 
 Three defects found auditing the first generated specification, fixed at the

@@ -297,19 +297,43 @@ rules, all mandatory.
    and show that it lands where you intend. A formula whose maximum penalty
    cannot reach the escalation threshold has a gate that never fires.
 
-3. NAME THE COMPARISON OPERATOR AND TEST THE EDGE. Write `< 0.90` or `<= 0.90`,
-   never "below 0.90" alone, and state what happens at exactly the threshold.
+3. NAME THE COMPARISON OPERATOR AND TEST THE EDGE. Use the operator given in
+   the brief's RESOLVED block verbatim — it is `<=`, not `<`, and not the word
+   "below". Copy it into every section that restates the threshold, including
+   the TESTS table, where a clean run's expected confidence is then `>` the
+   threshold rather than `>=` it. State what happens at exactly the threshold.
    Where a penalty is expressed as a fraction of a total — one of six catalogs,
    one of three bundles — check whether the whole class failing lands on the
    boundary or inside it. It usually lands on it, and then the employee's most
    catastrophic input produces no escalation at all.
 
-4. A WHOLE INPUT CLASS FAILING IS ALWAYS AN ESCALATION. When every instance of
+4. A CAPPED DEDUCTION LANDS ON THE THRESHOLD. Wherever a penalty carries a cap
+   — "0.02 each, capped at 0.10" — compute what the cap alone produces. A cap
+   set to exactly the distance between 1.00 and the threshold puts the fully
+   saturated case precisely on the line, which is the one value an exclusive
+   comparison lets through. Either move the cap or make the comparison
+   inclusive; do not leave the two to coincide.
+
+5. A WHOLE INPUT CLASS FAILING IS ALWAYS AN ESCALATION. When every instance of
    one kind of input is missing, unreadable or unbuildable — all catalogs, all
    bundles, all repositories, all clips, all source documents — the run is
    `escalated` at minimum, whatever the arithmetic says. The employee cannot do
    the job it exists for, and a human must be told. State this rule explicitly;
    do not leave it to the confidence formula to imply it.
+
+=== THE ADVERSARIAL GUARANTEE IS A CONSTRAINT, NOT A PROMISE ===
+Every brief carries an adversarial test vector, and every one ends the same way:
+the employee continues, records the attempt, and its verdict is unchanged. State
+that in the output schema, not only in prose.
+
+The artifact's record of an attempt must carry a field asserting the verdict was
+unaffected, pinned by the schema so the other value cannot be written — a
+`const` is the simplest form. Name it whatever reads best for the employee;
+what matters is that an artifact claiming an injection changed the outcome is
+structurally invalid rather than merely contradicted by a sentence elsewhere.
+
+A promise in prose is checked by whoever reads it. A schema constraint is
+checked on every run, before the artifact is written.
 
 === SHARED FILE LAYOUT ===
 employees/
