@@ -1,0 +1,16 @@
+{
+  "scoreboard": "DVO-D06-checking",
+  "monitor": "DVO-D05-uvm-sv",
+  "driver": "DVO-D05-uvm-sv",
+  "stimulus": "DVO-D05-uvm-sv",
+  "reference_model": "DVO-D06-checking",
+  "assertion": "DVO-D06-checking",
+  "protocol": "DVO-D04-protocol",
+  "reset_race": "DVO-D03-rtl-intelligence",
+  "x_propagation": "DVO-D03-rtl-intelligence",
+  "dut": "DVO-D03-rtl-intelligence",
+  "tb": "DVO-D05-uvm-sv",
+  "configuration": "DVO-D02-architecture",
+  "tool": "DVO-D09-simulation",
+  "spec_ambiguity": "DVO-D02-architecture"
+}

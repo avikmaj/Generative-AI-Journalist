@@ -307,7 +307,7 @@ def main() -> int:
     db = RegressionDB(db_path)
     regression_id = db.start_regression(
         name="nightly golden_apb L0-L2", project="golden_apb", tier="L2",
-        started_utc="2026-09-19T22:00:00Z", git_commit="fd8270f33c9f367c6cbdd44f0",
+        started_utc="2026-09-19T22:00:00Z", git_commit="fd8270f33c9f367c6cbdd44f0be74042dfe94ac9",
         git_branch="main", git_dirty=0, backend="verilator",
         backend_version="5.050", frontend_version="slang 11.0.0",
         uvm_version="2020.3.1", host="uvmstudio-runner",

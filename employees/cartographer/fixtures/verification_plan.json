@@ -1,0 +1,35 @@
+{
+  "plan_sha": "b9c1e0a4d7f28315ac6e0b44f1d92e77c5308a16",
+  "generated_at": "2026-09-19T21:00:00Z",
+  "items": [
+    {
+      "item_id": "VP-APB-001",
+      "feature": "APB4 error response on unmapped address",
+      "owner_department": "dv",
+      "priority": 1,
+      "coverage_bindings": [
+        "tb_top.u_env.u_cov.cg_apb.cp_addr.err_region",
+        "tb_top.u_env.u_cov.cg_apb.x_dir_addr.<rd,err_region>",
+        "tb_top.u_env.u_cov.cg_apb.x_dir_addr.<wr,err_region>"
+      ]
+    },
+    {
+      "item_id": "VP-APB-002",
+      "feature": "Write data corner values",
+      "owner_department": "dv",
+      "priority": 3,
+      "coverage_bindings": [
+        "tb_top.u_env.u_cov.cg_apb.cp_wdata_corner.allones"
+      ]
+    },
+    {
+      "item_id": "VP-APB-003",
+      "feature": "Byte-strobe coverage on writes",
+      "owner_department": "dv",
+      "priority": 2,
+      "coverage_bindings": [
+        "tb_top.u_env.u_cov.cg_apb.x_dir_strb.*"
+      ]
+    }
+  ]
+}

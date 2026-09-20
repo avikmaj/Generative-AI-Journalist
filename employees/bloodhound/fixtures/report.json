@@ -6,8 +6,8 @@
     "project": "golden_apb",
     "tier": "L2",
     "started_utc": "2026-09-19T22:00:00Z",
-    "finished_utc": "2026-09-20T17:15:07Z",
-    "git_commit": "fd8270f33c9f367c6cbdd44f0",
+    "finished_utc": "2026-09-20T17:20:24Z",
+    "git_commit": "fd8270f33c9f367c6cbdd44f0be74042dfe94ac9",
     "git_branch": "main",
     "git_dirty": 0,
     "backend": "verilator",
@@ -167,7 +167,7 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     },
     {
       "id": 8,
@@ -187,7 +187,7 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     },
     {
       "id": 2,
@@ -207,7 +207,7 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     },
     {
       "id": 3,
@@ -227,7 +227,7 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     },
     {
       "id": 4,
@@ -247,7 +247,7 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     },
     {
       "id": 5,
@@ -267,7 +267,7 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     },
     {
       "id": 6,
@@ -287,7 +287,7 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     },
     {
       "id": 1,
@@ -307,7 +307,7 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     },
     {
       "id": 9,
@@ -327,15 +327,15 @@
       "wave_path": null,
       "coverage_path": null,
       "repro_path": null,
-      "started_utc": "2026-09-20T17:15:07Z"
+      "started_utc": "2026-09-20T17:20:24Z"
     }
   ],
   "failure_clusters": [
     {
       "id": 1,
       "signature": "UVM_ERROR tb/apb_pkg.sv(<N>) @<T>: uvm_test_top.env.sb [SB_MISMATCH] read data mismatch at addr <HEX>: expected <HEX>, got <HEX>",
-      "first_seen_utc": "2026-09-20T17:15:07Z",
-      "last_seen_utc": "2026-09-20T17:15:07Z",
+      "first_seen_utc": "2026-09-20T17:20:24Z",
+      "last_seen_utc": "2026-09-20T17:20:24Z",
       "occurrences": 3,
       "example_run": 3,
       "triage_state": "NEW",
@@ -344,8 +344,8 @@
     {
       "id": 4,
       "signature": "NEG_NOT_DETECTED:apb_error_test",
-      "first_seen_utc": "2026-09-20T17:15:07Z",
-      "last_seen_utc": "2026-09-20T17:15:07Z",
+      "first_seen_utc": "2026-09-20T17:20:24Z",
+      "last_seen_utc": "2026-09-20T17:20:24Z",
       "occurrences": 1,
       "example_run": 8,
       "triage_state": "NEW",
@@ -354,8 +354,8 @@
     {
       "id": 5,
       "signature": "%Error: tb/apb_if.sv:<N>: Assertion failed in top.tb_top.u_apb_if.ap_pready_stable: PREADY deasserted before PENABLE fell",
-      "first_seen_utc": "2026-09-20T17:15:07Z",
-      "last_seen_utc": "2026-09-20T17:15:07Z",
+      "first_seen_utc": "2026-09-20T17:20:24Z",
+      "last_seen_utc": "2026-09-20T17:20:24Z",
       "occurrences": 1,
       "example_run": 9,
       "triage_state": "NEW",
