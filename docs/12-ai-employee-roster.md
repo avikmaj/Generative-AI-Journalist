@@ -24,17 +24,29 @@ unresolved marker — not a slot for you. Leave PART A byte-for-byte as written.
 
 For each employee, in this order:
 
-1. **Copy that employee's BRIEF block** from section 4 into a scratch editor
-   (Notepad, VS Code, anything).
-2. **Replace every `<<FILL: ...>>` in it** with your real value — including the
-   angle brackets. `<<FILL: path to log dir>>` becomes `/proj/regress/nightly`.
-   Search for `FILL` afterwards; the count must be zero.
-3. Open a fresh Claude Code session.
-4. **Paste PART A — STANDARD** (section 1), unmodified, exactly as written.
-5. **Paste your edited BRIEF** immediately after it, in the same message or the
-   next one.
-6. Claude returns a complete `EMPLOYEE.md`.
-7. Save it to `employees/<handle>/EMPLOYEE.md`.
+1. Open a fresh session.
+2. **Paste PART A — STANDARD** (section 1), unmodified, exactly as written.
+3. **Paste that employee's BRIEF block** from section 4, immediately after it.
+4. Claude returns a complete `EMPLOYEE.md`.
+5. Save it to `employees/<handle>/EMPLOYEE.md`.
+
+That is the whole procedure. There is no preparation step.
+
+**You do not have to fill in the `<<FILL: ...>>` markers before pasting.** A
+marker is not a blank you must complete — it is a message to Claude meaning
+"this value was not supplied", and PART A already instructs Claude to collect
+every unresolved marker into an `OPEN QUESTIONS` list at the end of the document
+rather than invent a path, a threshold or a destination.
+
+So: type a value over a marker only where you already know it off the top of
+your head, brackets and all. Leave every other marker exactly as it is. Either
+way you get a complete specification back; the only difference is the length of
+the `OPEN QUESTIONS` list, and that list is the useful part — it names precisely
+what you still need to find out, which is a far better starting point than a
+blank form.
+
+Resolve what is left before the employee goes live. That is the only moment a
+leftover marker actually matters.
 
 ```
 ┌─ session ──────────────────────────────────┐
@@ -141,11 +153,8 @@ own brief.
 > path, a threshold, a destination. Anything not marked is already decided; use it
 > as written.
 >
-> **If you genuinely don't know a value yet**, leave the marker in place and paste
-> it anyway. PART A instructs Claude to carry unresolved markers into an OPEN
-> QUESTIONS section at the end of the `EMPLOYEE.md` rather than inventing a path
-> or a threshold. Resolve them before the employee goes live — never before then
-> does a marker become harmless.
+> Leaving a marker in is the normal case, not a failure — see the procedure
+> above. Resolve them before the employee goes live.
 
 ---
 
