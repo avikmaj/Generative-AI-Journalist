@@ -5,9 +5,9 @@ on:
   # branch filter runs both gates twice for every push to an open PR.
   push:
     branches: [main]
-    paths: ["employees/**", "scripts/validate_employees.py", "scripts/extract_employee_schemas.py"]
+    paths: ["employees/**", "scripts/validate_employees.py", "scripts/extract_employee_schemas.py", "scripts/run_all_employees.py"]
   pull_request:
-    paths: ["employees/**", "scripts/validate_employees.py", "scripts/extract_employee_schemas.py"]
+    paths: ["employees/**", "scripts/validate_employees.py", "scripts/extract_employee_schemas.py", "scripts/run_all_employees.py"]
 
 jobs:
   employee-specs:
@@ -27,3 +27,9 @@ jobs:
 
       - name: Shared loop behaves as specified
         run: python -m unittest discover -s employees/core/tests -t . -v
+
+      # The checks above read the specifications. This one runs the code, so a
+      # schema change the extractor happily propagates but that no runner can
+      # satisfy fails here rather than the first time somebody deploys.
+      - name: Every employee runs against its fixture
+        run: python scripts/run_all_employees.py --apply
