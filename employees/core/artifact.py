@@ -52,17 +52,27 @@ def _structural_errors(instance: Any, schema: dict, path: str = "$") -> list[str
     shape. It cannot replace a real validator, which is why the result says so.
     """
     errors: list[str] = []
-    expected = schema.get("type")
     types = {
         "object": dict, "array": list, "string": str,
         "number": (int, float), "integer": int, "boolean": bool,
+        "null": type(None),
     }
-    if expected in types and not isinstance(instance, types[expected]):
-        if not (expected == "number" and isinstance(instance, bool) is False
-                and isinstance(instance, (int, float))):
-            return [f"{path}: expected {expected}, got {type(instance).__name__}"]
-    if expected == "integer" and isinstance(instance, bool):
-        return [f"{path}: expected integer, got boolean"]
+
+    # "type" may be a single name or a list of them, and a nullable field is
+    # spelled as the latter. Treating only the string form would reject every
+    # optional value these schemas declare.
+    declared = schema.get("type")
+    names = [declared] if isinstance(declared, str) else list(declared or [])
+    known = [n for n in names if n in types]
+    if known:
+        def matches(name: str) -> bool:
+            # bool is a subclass of int in Python; JSON Schema does not agree.
+            if name in {"integer", "number"} and isinstance(instance, bool):
+                return False
+            return isinstance(instance, types[name])
+
+        if not any(matches(n) for n in known):
+            return [f"{path}: expected {'/'.join(known)}, got {type(instance).__name__}"]
 
     if "const" in schema and instance != schema["const"]:
         errors.append(f"{path}: expected const {schema['const']!r}, got {instance!r}")
