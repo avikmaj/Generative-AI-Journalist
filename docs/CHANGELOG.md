@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0
+
+AI employee roster and prompt authoring pack.
+
+### Added
+
+- `docs/12-ai-employee-roster.md`: sixteen production-grade AI employee briefs consolidated from the
+  agent definitions across all four repositories, ordered into four build waves.
+- A reusable standard preamble defining twelve required specification sections, thirteen production
+  non-negotiables, the shared file layout and the run-record schema.
+- Per-employee briefs covering mandate, area, source agents, trigger, inputs, output contract, blast
+  radius, budgets, idempotency, escalation, failure modes and success metric.
+
 ## 1.1.1
 
 Limit-safe platform packaging.
