@@ -261,7 +261,12 @@ Every section above must be consistent with all thirteen:
 3.  Validated output — JSON Schema checked before write. Malformed output is
     retried up to the cap, then fails loudly. Never persist an invalid artifact.
 4.  Hard budgets — breach aborts the run with status "failed". Never overrun silently.
-5.  Bounded retries — exponential backoff on 429/5xx/timeout, capped. Never unbounded.
+5.  Bounded retries — exponential backoff on HTTP 429, 5xx and timeout:
+    delays 1s, 2s, 4s, 8s with jitter of plus or minus 20%, a maximum of 4
+    attempts per call, and a 60-second ceiling on any single request. Retries
+    count against the token and tool-call budgets. Never unbounded. Use these
+    figures unless the brief names stricter ones, so that every employee
+    behaves identically under load.
 6.  Structured run record — every run persists the record schema given below.
 7.  Confidence gate — below threshold, escalate to a human. Never guess.
 8.  Blast radius — read-only default; `--apply` to write; allowlisted destinations only.
@@ -275,6 +280,36 @@ Every section above must be consistent with all thirteen:
     regression can be bisected.
 13. Liveness — a scheduled run that does not complete raises an alert. Silence
     must never read as success.
+
+=== NUMERIC CONSISTENCY AND BOUNDARIES ===
+A specification fails in practice when two of its sections state the same
+number differently, or when a threshold is never tested at its own edge. Four
+rules, all mandatory.
+
+1. ONE DEFINITION PER NUMBER. Every threshold, weight, penalty, limit and
+   ceiling is defined in exactly one section. Everywhere else refers to it by
+   name — "the per-catalog penalty", "the collision threshold" — and never
+   restates the figure. A number that appears twice will eventually disagree
+   with itself, and the reader cannot tell which copy is authoritative.
+
+2. SHOW THE WORST CASE. Where confidence, a score or a budget is computed,
+   state what the value becomes when every penalised condition is true at once,
+   and show that it lands where you intend. A formula whose maximum penalty
+   cannot reach the escalation threshold has a gate that never fires.
+
+3. NAME THE COMPARISON OPERATOR AND TEST THE EDGE. Write `< 0.90` or `<= 0.90`,
+   never "below 0.90" alone, and state what happens at exactly the threshold.
+   Where a penalty is expressed as a fraction of a total — one of six catalogs,
+   one of three bundles — check whether the whole class failing lands on the
+   boundary or inside it. It usually lands on it, and then the employee's most
+   catastrophic input produces no escalation at all.
+
+4. A WHOLE INPUT CLASS FAILING IS ALWAYS AN ESCALATION. When every instance of
+   one kind of input is missing, unreadable or unbuildable — all catalogs, all
+   bundles, all repositories, all clips, all source documents — the run is
+   `escalated` at minimum, whatever the arithmetic says. The employee cannot do
+   the job it exists for, and a human must be told. State this rule explicitly;
+   do not leave it to the confidence formula to imply it.
 
 === SHARED FILE LAYOUT ===
 employees/
@@ -470,7 +505,7 @@ RESOLVED — do not change these, they are already decided
                 Risk medium · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · xhigh
-  Confidence    escalate below 0.90
+  Confidence    escalate when confidence <= 0.90
   Liveness      20 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -633,7 +668,7 @@ RESOLVED — do not change these, they are already decided
                 Risk low · Complexity intermediate · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · high
-  Confidence    escalate below 0.75
+  Confidence    escalate when confidence <= 0.75
   Liveness      10 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -723,7 +758,7 @@ RESOLVED — do not change these, they are already decided
                 Risk low · Complexity intermediate · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · high
-  Confidence    escalate below 0.75
+  Confidence    escalate when confidence <= 0.75
   Liveness      10 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -816,7 +851,7 @@ RESOLVED — do not change these, they are already decided
                 Risk low · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · xhigh
-  Confidence    escalate below 0.80
+  Confidence    escalate when confidence <= 0.80
   Liveness      15 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -914,7 +949,7 @@ RESOLVED — do not change these, they are already decided
                 Risk medium · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · xhigh
-  Confidence    escalate below 0.70
+  Confidence    escalate when confidence <= 0.70
   Liveness      30 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1018,7 +1053,7 @@ RESOLVED — do not change these, they are already decided
                 Risk high · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · max
-  Confidence    escalate below 0.95
+  Confidence    escalate when confidence <= 0.95
   Liveness      25 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1123,7 +1158,7 @@ RESOLVED — do not change these, they are already decided
                 Risk medium · Complexity intermediate · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · high
-  Confidence    escalate below 0.90
+  Confidence    escalate when confidence <= 0.90
   Liveness      15 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1217,7 +1252,7 @@ RESOLVED — do not change these, they are already decided
                 Risk low · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · xhigh
-  Confidence    escalate below 0.80
+  Confidence    escalate when confidence <= 0.80
   Liveness      25 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1316,7 +1351,7 @@ RESOLVED — do not change these, they are already decided
                 Risk medium · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · xhigh
-  Confidence    escalate below 0.85
+  Confidence    escalate when confidence <= 0.85
   Liveness      30 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1411,7 +1446,7 @@ RESOLVED — do not change these, they are already decided
                 Risk medium · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · xhigh
-  Confidence    escalate below 0.80
+  Confidence    escalate when confidence <= 0.80
   Liveness      25 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1506,7 +1541,7 @@ RESOLVED — do not change these, they are already decided
                 Risk high · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · max
-  Confidence    escalate below 0.90
+  Confidence    escalate when confidence <= 0.90
   Liveness      30 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1603,7 +1638,7 @@ RESOLVED — do not change these, they are already decided
                 Risk high · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · max (seats: Sonnet 5 · high)
-  Confidence    escalate below 0.60
+  Confidence    escalate when confidence <= 0.60
   Liveness      40 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1715,7 +1750,7 @@ RESOLVED — do not change these, they are already decided
                 Risk low · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · xhigh
-  Confidence    escalate below 0.80
+  Confidence    escalate when confidence <= 0.80
   Liveness      30 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1814,7 +1849,7 @@ RESOLVED — do not change these, they are already decided
                 Risk low · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · high
-  Confidence    escalate below 0.80
+  Confidence    escalate when confidence <= 0.80
   Liveness      25 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -1914,7 +1949,7 @@ RESOLVED — do not change these, they are already decided
                 Risk medium · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · xhigh
-  Confidence    escalate below 0.85
+  Confidence    escalate when confidence <= 0.85
   Liveness      45 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
@@ -2012,7 +2047,7 @@ RESOLVED — do not change these, they are already decided
                 Risk high · Complexity advanced · Interaction single-shot
                 Models Claude · Source license CC0-1.0
   Model/effort  Opus 5 · max
-  Confidence    escalate below 0.90
+  Confidence    escalate when confidence <= 0.90
   Liveness      35 minutes from start; exceeding it alerts and sets status failed
   Issues,
   escalations,
