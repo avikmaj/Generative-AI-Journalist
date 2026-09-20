@@ -1,0 +1,65 @@
+{
+  "slug": "deploy-employees-internally",
+  "decision": "Should the sixteen AI employees run unattended against the production repositories, or stay behind a manual invocation until the run records have been reviewed for a full month?",
+  "context": "Obviously the right choice is to ship it now. The runners are schema-gated and every write is allowlisted.",
+  "outcome_unit": "engineer-hours saved per month, net of review time",
+  "options": [
+    {"id": "unattended-now", "label": "Run unattended immediately",
+     "description": "Schedule all sixteen on their triggers against the live repositories from tomorrow."},
+    {"id": "manual-first", "label": "Manual invocation for one month",
+     "description": "Keep every runner behind an explicit invocation and review the run records weekly before scheduling anything."},
+    {"id": "staged", "label": "Stage by blast radius",
+     "description": "Schedule the read-only employees unattended, keep the ones that open issues or write artifacts behind manual invocation."}
+  ],
+  "criteria": [
+    {"name": "blast radius if an employee is wrong", "weight": 0.4, "origin": "supplied"},
+    {"name": "hours actually saved", "weight": 0.35, "origin": "supplied"},
+    {"name": "time to useful signal", "weight": 0.25, "origin": "derived"}
+  ],
+  "falsifiers": [
+    {"option_id": "unattended-now", "fact": "a single unattended run opens a GitHub issue against a cluster that turns out to be a fixture artifact"},
+    {"option_id": "manual-first", "fact": "four weeks of manual invocation produces no finding that a scheduled run would have missed"},
+    {"option_id": "staged", "fact": "the read-only employees produce output nobody reads, so staging saves nothing"}
+  ],
+  "positions": [
+    {"seat": "C1", "option": "staged",
+     "argument": "Blast radius is the only criterion that can produce an irreversible outcome here, and it splits cleanly along a line the specifications already draw. The read-only employees cannot damage anything by being wrong; the ones that open issues or write artifacts can create work and noise that a person then has to undo. Staging along that existing line costs nothing to implement because the allowlists already encode it.",
+     "evidence": [{"claim": "Every specification declares an exhaustive write allowlist in section 7", "source": "input-context"},
+                  {"claim": "Nine of the sixteen are read-only without --apply", "source": "input-context"}]},
+    {"seat": "C10", "option": "staged",
+     "argument": "Time to useful signal matters more than it looks, because the run records are the only evidence anyone will have about whether these employees are calibrated. Scheduling the read-only half produces that evidence continuously and for free, while a month of manual invocation produces it sporadically and only when somebody remembers. The staged option gets the data without accepting the risk.",
+     "evidence": [{"claim": "Run records are persisted outside the allowlist on every run", "source": "input-context"}]},
+    {"seat": "S5", "option": "manual-first",
+     "argument": "None of the sixteen has been run against real production inputs except KEYSTONE and the two DV employees, and two of those ran against fixtures built for them. Calibration on a fixture tells you the code works, not that the thresholds are right. A month of manual invocation is cheap insurance against discovering a mis-set confidence threshold through a month of wrong artifacts.",
+     "evidence": [{"claim": "Thirteen runners are fixture-verified rather than proven against real inputs", "source": "input-context"}]},
+    {"seat": "X6", "option": "unattended-now",
+     "argument": "The conservative options both assume review capacity that does not exist. One person cannot read sixteen employees' run records weekly alongside their actual job, so manual-first in practice means the employees do not run at all and the month produces nothing. If the answer is that nobody will review them either way, scheduling them at least produces artifacts somebody might read when they need one.",
+     "evidence": [{"claim": "The operator is a single person running this alongside other work", "source": "input-context"}],
+     "dissent": "Staging still assumes weekly review of the manual half, and that assumption has no evidence behind it either."}
+  ],
+  "rebuttals": [
+    {"round": 1, "seat": "S5", "responds_to": "C1",
+     "argument": "Splitting by blast radius assumes the read-only employees are harmless when they are wrong, but a wrong artifact that nobody flags becomes an input to the next decision, and being read-only does not make it less wrong."},
+    {"round": 1, "seat": "C1", "responds_to": "X6",
+     "argument": "Review capacity is a real constraint, and it argues for fewer scheduled employees rather than more. Staging reduces what must be reviewed to the half that can actually cause harm."},
+    {"round": 2, "seat": "C10", "responds_to": "S5",
+     "argument": "A wrong read-only artifact is recoverable precisely because it is inert until somebody acts on it, and the run record states its own confidence and gaps, which is the flag S5 says is missing."}
+  ],
+  "attacks": [
+    {"attack": "A read-only employee that escalates repeatedly trains the operator to ignore escalations, which silently disables the whole confidence mechanism.", "severity": "high", "raised_by": "X6", "answered": true},
+    {"attack": "Staging doubles the operational surface: two modes to remember, and the manual half rots because nothing forces it to run.", "severity": "medium", "raised_by": "X6", "answered": true},
+    {"attack": "The read-only/write split is drawn from the specifications rather than from measured behaviour, and a runner with a bug can write outside its declared allowlist.", "severity": "high", "raised_by": "C9", "answered": true},
+    {"attack": "Nothing in the staged plan says when the manual half graduates, so it stays manual forever by default.", "severity": "medium", "raised_by": "X6", "answered": false}
+  ],
+  "scenarios": [
+    {"name": "base", "outcome": 6.0, "probability": 0.45,
+     "assumptions": ["The read-only half runs nightly and produces roughly two actionable findings a week."]},
+    {"name": "bull", "outcome": 14.0, "probability": 0.15,
+     "assumptions": ["Triage and coverage findings land accurately enough that the operator stops reading raw regression logs."]},
+    {"name": "bear", "outcome": 1.0, "probability": 0.30,
+     "assumptions": ["Findings are mostly correct but nobody has time to act on them, so the saving is only in not reading logs."]},
+    {"name": "stress", "outcome": -4.0, "probability": 0.10,
+     "assumptions": ["A mis-set threshold produces escalations every night and the operator spends more time dismissing them than the employees save."]}
+  ],
+  "veto": {"invoked": false}
+}
