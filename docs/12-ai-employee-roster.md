@@ -425,6 +425,21 @@ Paste **PART A — STANDARD** above, then one block below.
 ```text
 === EMPLOYEE BRIEF: KEYSTONE ===
 
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-keystone · Version 1.0.0 · 00-foundation-and-methods / prompt-governance
+                Risk medium · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · xhigh
+  Confidence    escalate below 0.90
+  Liveness      20 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "keystone-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  DV gate verdicts and evidence classes — TRIBUNAL's. KEYSTONE checks that artifacts are structurally valid and mutually consistent; it never rules on whether verification passed.
+
 CODENAME: KEYSTONE
 HANDLE:   keystone
 TITLE:    Repo & Catalog Integrity Officer
@@ -443,7 +458,7 @@ AREA TO COVER
   contract: all fourteen headings present and in order, `## Metadata` before
   section 1, the seven library XML tags present in the prompt body, TESTS
   carrying an adversarial row, VERSION HISTORY non-empty, and zero unresolved
-  `<<FILL:` markers outside OPEN QUESTIONS. Confirm `schema/output.json` parses
+  fill-markers outside OPEN QUESTIONS. Confirm `schema/output.json` parses
   as valid JSON Schema and that the artifact path in section 5 matches it.
   No other tool checks these files; the library's own `scripts/validate.py`
   globs only `prompts/*/*/sector-expert.md` and will never see them.
@@ -460,6 +475,30 @@ AREA TO COVER
         skills/film/ai-movie-studio/references/core/filmmaking.md  (12 "hats")
         AVIK-STUDIO-MTEAM.../agents/*.md                           (17 subagents)
   Report any role that exists in one and not another, or whose mandate differs.
+
+THE FOUR REPOSITORIES (resolved)
+  avikmaj/Generative-AI-Journalist                              (hub)
+  avikmaj/DESIGN_VERIFICATION_SOLUTIONS
+  avikmaj/AVIK-STUDIO-MTEAM-Agentic-AI-Film-Production-Playbook
+  avikmaj/BUSINESS_SOLUTIONS
+The truncated path `AVIK-STUDIO-MTEAM.../agents/*.md` means the 17 files at the
+root `agents/` directory of the third repository.
+
+BUNDLE LIMITS (verified in the builders — do not re-derive or invent)
+  Claude   instructions <= 4000 chars
+  ChatGPT  instructions <= 4000 chars, exactly 5 upload files
+  Grok     instructions <= 4000 chars, exactly 5 upload files
+  Flattened corpus block <= 280000 chars (scripts/_bundle_lib.MAX_FLAT_CHARS)
+
+GOLDEN-SET PASS BARS (verified in evals/rubric.md — do not invent)
+  22 cases. Each scored 0-2 per dimension; a case's score is the MINIMUM of its
+  dimension scores, never the mean.
+  - 100% assertion pass on routing-* and guard-* cases
+  - >= 90% assertion pass overall
+  - no case scores 0 on grounding, honesty, gate_discipline or licensing
+  - rubric mean >= 1.6 across all scored dimensions
+  - zero cases that previously scored 2 and now score below 2
+  Record each run's scores against model/VERSION.
 
 EXISTING SOURCE TO BUILD ON
 - scripts/validate_skills.py
@@ -549,6 +588,21 @@ artifacts is evidence.
 ```text
 === EMPLOYEE BRIEF: ARGUS ===
 
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-argus · Version 1.0.0 · 50-creative-media-culture / social-media-creator-economy
+                Risk low · Complexity intermediate · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · high
+  Confidence    escalate below 0.75
+  Liveness      10 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "argus-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Titles, descriptions and tags — HERALD's. ARGUS decides what to make; HERALD decides how it is announced.
+
 CODENAME: ARGUS
 HANDLE:   argus
 TITLE:    Trend & Topic Intelligence Officer
@@ -614,7 +668,7 @@ records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
 - Golden set of 20 past weeks: did ARGUS's top-3 contain the topic that actually
-  became your best-performing video that week? Pass bar: <<FILL: hit rate, suggest >=40%>>
+  became your best-performing video that week? Pass bar: >= 40%
 ```
 
 ---
@@ -623,6 +677,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: HERALD ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-herald · Version 1.0.0 · 50-creative-media-culture / content-creation-strategy
+                Risk low · Complexity intermediate · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · high
+  Confidence    escalate below 0.75
+  Liveness      10 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "herald-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Choosing the topic — ARGUS's. Publishing — nobody's; publishing stays manual.
 
 CODENAME: HERALD
 HANDLE:   herald
@@ -637,7 +706,7 @@ AREA TO COVER
 - Description: first two lines carry the hook, then the structured body,
   chapters, and the channel's standard link block.
 - Tags and topical cluster alignment with the rest of the catalogue.
-- Thumbnail copy: maximum <<FILL: word cap, suggest 4>> words, legibility at
+- Thumbnail copy: maximum 4 words, legibility at
   mobile thumbnail size.
 - Must state which title variant it recommends and why.
 
@@ -671,7 +740,7 @@ IDEMPOTENCY
 - Key on (video_id, transcript SHA). Same input, same file overwritten.
 
 CONFIDENCE & ESCALATION
-- If the transcript is under <<FILL: word floor, suggest 200>> words, escalate
+- If the transcript is under 200 words, escalate
   rather than invent a hook from a thin source.
 
 FAILURE MODES TO COVER
@@ -702,6 +771,21 @@ SUCCESS METRIC
 ```text
 === EMPLOYEE BRIEF: AUGUR ===
 
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-augur · Version 1.0.0 · 30-technology-engineering / data-science-analytics
+                Risk low · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · xhigh
+  Confidence    escalate below 0.80
+  Liveness      15 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "augur-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Changing any video — nobody's. AUGUR diagnoses and recommends; HERALD implements metadata changes.
+
 CODENAME: AUGUR
 HANDLE:   augur
 TITLE:    Channel Performance Analyst
@@ -726,7 +810,7 @@ TRIGGER
 - Weekly. Suggested `0 3 * * 1` UTC (08:30 IST Monday).
 
 INPUTS
-- YouTube Analytics for the trailing <<FILL: window, suggest 90>> days.
+- YouTube Analytics for the trailing 90 days.
   Source: <<FILL: YouTube connector, or exported CSV path>>
 - Prior week's AUGUR report, to check whether last week's actions were taken
   and what happened.
@@ -749,7 +833,7 @@ IDEMPOTENCY
 - Key on (iso_week, analytics snapshot digest).
 
 CONFIDENCE & ESCALATION
-- Any video with fewer than <<FILL: impressions floor, suggest 1000>>
+- Any video with fewer than 1000
   impressions is excluded from attribution — the sample is noise. Say so in
   gaps[] rather than reasoning from it.
 
@@ -784,6 +868,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: BLOODHOUND ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-bloodhound · Version 1.0.0 · 30-technology-engineering / design-verification-uvm
+                Risk medium · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · xhigh
+  Confidence    escalate below 0.70
+  Liveness      30 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "bloodhound-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Gate verdicts and signoff — TRIBUNAL's. Coverage holes — CARTOGRAPHER's. BLOODHOUND diagnoses failures only.
 
 CODENAME: BLOODHOUND
 HANDLE:   bloodhound
@@ -839,7 +938,7 @@ IDEMPOTENCY
   signature is updated with the new occurrence, never re-filed.
 
 CONFIDENCE & ESCALATION
-- Below <<FILL: threshold, suggest 0.7>> the cause is recorded as a HYPOTHESIS
+- Below 0.70 the cause is recorded as a HYPOTHESIS
   with the next evidence to collect — never as a root cause.
 - "Flake" is never a root cause. It may only be concluded from differing
   outcomes across seeds on an identical commit.
@@ -862,9 +961,9 @@ The required behaviour is the same in every case: the employee continues,
 records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
-- Golden set of <<FILL: suggest 40>> past failures with known root causes.
+- Golden set of 40 past failures with known root causes.
   Grade: cluster purity, cause_domain accuracy, and routing accuracy.
-  Pass bar: <<FILL: suggest >=80% cause_domain correct, zero false PASS>>
+  Pass bar: >= 80% cause_domain correct, and zero false PASS
 ```
 
 ---
@@ -873,6 +972,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: TRIBUNAL ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-tribunal · Version 1.0.0 · 30-technology-engineering / design-verification-uvm
+                Risk high · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · max
+  Confidence    escalate below 0.95
+  Liveness      25 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "tribunal-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Diagnosing why a test failed — BLOODHOUND's. TRIBUNAL rules on whether evidence supports a claim, never on root cause.
 
 CODENAME: TRIBUNAL
 HANDLE:   tribunal
@@ -902,7 +1016,7 @@ EXISTING SOURCE TO BUILD ON
 
 TRIGGER
 - On gate-advancement request, and on every push to a VIP under audit.
-- Plus a weekly sweep of all open VIPs: <<FILL: cron, suggest 0 4 * * 2 UTC>>
+- Plus a weekly sweep of all open VIPs: 0 4 * * 2 UTC
 
 INPUTS
 - VIP tree root: <<FILL: path>>
@@ -964,6 +1078,21 @@ SUCCESS METRIC
 ```text
 === EMPLOYEE BRIEF: AEGIS ===
 
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-aegis · Version 1.0.0 · 50-creative-media-culture / graphic-brand-design
+                Risk medium · Complexity intermediate · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · high
+  Confidence    escalate below 0.90
+  Liveness      15 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "aegis-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Continuity against production locks — MNEMOSYNE's. AEGIS checks brand and legibility on a finished render only.
+
 CODENAME: AEGIS
 HANDLE:   aegis
 TITLE:    Brand Compliance Gate
@@ -1011,7 +1140,7 @@ IDEMPOTENCY
 - Key on asset SHA256. Identical asset returns the cached verdict.
 
 CONFIDENCE & ESCALATION
-- Any text it cannot read with confidence >= <<FILL: suggest 0.9>> is escalated
+- Any text it cannot read with confidence >= 0.90 is escalated
   as "unreadable — human check required", never passed.
 
 FAILURE MODES TO COVER
@@ -1031,7 +1160,7 @@ The required behaviour is the same in every case: the employee continues,
 records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
-- Golden set: <<FILL: suggest 30>> assets, half with deliberately seeded
+- Golden set: 30 assets, half with deliberately seeded
   defects (typo, wrong gold, missing watermark, safe-area violation).
   Pass bar: 100% of seeded defects caught. A missed defect ships publicly.
 ```
@@ -1042,6 +1171,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: MNEMOSYNE ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-mnemosyne · Version 1.0.0 · 20-business-functions / quality-reliability
+                Risk low · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · xhigh
+  Confidence    escalate below 0.80
+  Liveness      25 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "mnemosyne-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Brand and watermark checks — AEGIS's. Writing prompts — APERTURE's. MNEMOSYNE judges clips against locks.
 
 CODENAME: MNEMOSYNE
 HANDLE:   mnemo
@@ -1113,7 +1257,7 @@ records the attempt in its artifact, and its verdict is unchanged.
 SUCCESS METRIC
 - Golden set of past clips with known verdicts, including clips you personally
   rejected and why. Grade: agreement with your calls on objective categories.
-  Pass bar: <<FILL: suggest >=85%, and zero approvals of a clip you rejected>>
+  Pass bar: >= 85% agreement, and zero approvals of a clip you rejected
 ```
 
 ---
@@ -1126,6 +1270,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: ARIADNE ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-ariadne · Version 1.0.0 · 30-technology-engineering / design-verification-uvm
+                Risk medium · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · xhigh
+  Confidence    escalate below 0.85
+  Liveness      30 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "ariadne-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Closing a gap — nobody's; ARIADNE reports gaps and never writes a test. Coverage classification — CARTOGRAPHER's.
 
 CODENAME: ARIADNE
 HANDLE:   ariadne
@@ -1150,7 +1309,7 @@ EXISTING SOURCE TO BUILD ON
 - skills/dv/dv-engineering-suite/assets/vplan_template.yaml
 
 TRIGGER
-- On change to the spec directory, plus weekly: <<FILL: cron, suggest 0 5 * * 3 UTC>>
+- On change to the spec directory, plus weekly: 0 5 * * 3 UTC
 
 INPUTS
 - Spec/architecture documents: <<FILL: path and formats — PDF? Markdown? Word?>>
@@ -1206,6 +1365,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: CARTOGRAPHER ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-cartographer · Version 1.0.0 · 30-technology-engineering / design-verification-uvm
+                Risk medium · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · xhigh
+  Confidence    escalate below 0.80
+  Liveness      25 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "cartographer-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  The vplan itself — ARIADNE's. Approving a waiver — a human's. CARTOGRAPHER proposes waiver candidates only.
 
 CODENAME: CARTOGRAPHER
 HANDLE:   cartographer
@@ -1277,8 +1451,7 @@ records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
 - Golden set of past coverage holes with known correct classifications.
-  Pass bar: <<FILL: suggest >=80% classification accuracy, and zero
-  UNMEASURED reported as ZERO>>
+  Pass bar: >= 80% classification accuracy, and zero UNMEASURED reported as ZERO
 ```
 
 ---
@@ -1287,6 +1460,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: MERIDIAN ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-meridian · Version 1.0.0 · 20-business-functions / investment-valuation
+                Risk high · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · max
+  Confidence    escalate below 0.90
+  Liveness      30 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "meridian-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Attacking the thesis — CRUCIBLE's. Deciding — QUORUM's and yours. MERIDIAN describes, it does not advise.
 
 CODENAME: MERIDIAN
 HANDLE:   meridian
@@ -1337,7 +1525,7 @@ IDEMPOTENCY
 
 CONFIDENCE & ESCALATION
 - Any figure that cannot be traced to a dated source is excluded, not estimated.
-- If more than <<FILL: suggest 20%>> of material figures are unsourced, the run
+- If more than 20% of material figures are unsourced, the run
   ends as `escalated` with what is missing — it does not ship a thin note.
 
 FAILURE MODES TO COVER
@@ -1358,7 +1546,7 @@ The required behaviour is the same in every case: the employee continues,
 records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
-- Golden set of <<FILL: suggest 10>> companies you have already analysed
+- Golden set of 10 companies you have already analysed
   yourself. Grade: factual accuracy, source traceability, and whether the
   confidence band honestly reflects the evidence.
 ```
@@ -1369,6 +1557,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: QUORUM ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-quorum · Version 1.0.0 · 20-business-functions / business-strategy
+                Risk high · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · max (seats: Sonnet 5 · high)
+  Confidence    escalate below 0.60
+  Liveness      40 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "quorum-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Sourcing the underlying analysis — MERIDIAN's and CRUCIBLE's. QUORUM stress-tests a decision, it does not research it.
 
 CODENAME: QUORUM
 HANDLE:   quorum
@@ -1425,7 +1628,7 @@ IDEMPOTENCY
   decision returns the prior record unless `--force` is passed.
 
 CONFIDENCE & ESCALATION
-- A verdict below <<FILL: suggest 0.6>> confidence is returned as
+- A verdict below 0.60 confidence is returned as
   "insufficient basis to decide" plus the specific information that would
   resolve it. Manufacturing a confident verdict from thin input is the failure
   this employee exists to prevent.
@@ -1447,7 +1650,7 @@ The required behaviour is the same in every case: the employee continues,
 records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
-- Golden set of <<FILL: suggest 8>> past decisions where you now know the
+- Golden set of 8 past decisions where you now know the
   outcome. Grade: did the red team surface the risk that actually materialised?
   That is the only question that matters here.
 ```
@@ -1466,6 +1669,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: GENESIS ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-genesis · Version 1.0.0 · 50-creative-media-culture / storytelling-screenwriting
+                Risk low · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · xhigh
+  Confidence    escalate below 0.80
+  Liveness      30 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "genesis-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Shot lists and prompts — APERTURE's. GENESIS locks story, character and world, and generates nothing.
 
 CODENAME: GENESIS
 HANDLE:   genesis
@@ -1539,7 +1757,7 @@ The required behaviour is the same in every case: the employee continues,
 records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
-- Golden set: <<FILL: suggest 5>> of your past productions. Would this lock have
+- Golden set: 5 of your past productions. Would this lock have
   prevented the continuity failures you actually hit? Grade on identity-token
   specificity and lock self-consistency.
 ```
@@ -1550,6 +1768,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: APERTURE ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-aperture · Version 1.0.0 · 50-creative-media-culture / image-generation-art-direction
+                Risk low · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · high
+  Confidence    escalate below 0.80
+  Liveness      25 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "aperture-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Amending a lock — GENESIS's; APERTURE escalates instead. Judging output — MNEMOSYNE's.
 
 CODENAME: APERTURE
 HANDLE:   aperture
@@ -1625,7 +1858,7 @@ records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
 - Golden set: past scenes with known first-pass approval rates.
-  Pass bar: <<FILL: first-pass clip approval rate, suggest >=60%>>. Grade
+  Pass bar: >= 60%. Grade
   against MNEMOSYNE's verdicts — the two employees are each other's check.
 ```
 
@@ -1635,6 +1868,21 @@ SUCCESS METRIC
 
 ```text
 === EMPLOYEE BRIEF: SPLICE ===
+
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-splice · Version 1.0.0 · 50-creative-media-culture / film-video-production
+                Risk medium · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · xhigh
+  Confidence    escalate below 0.85
+  Liveness      45 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "splice-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  Approving clips — MNEMOSYNE's. Brand sign-off — AEGIS's, after SPLICE renders. SPLICE never publishes.
 
 CODENAME: SPLICE
 HANDLE:   splice
@@ -1719,6 +1967,21 @@ SUCCESS METRIC
 ```text
 === EMPLOYEE BRIEF: CRUCIBLE ===
 
+RESOLVED — do not change these, they are already decided
+  Metadata      ID employee-crucible · Version 1.0.0 · 20-business-functions / finance-accounting
+                Risk high · Complexity advanced · Interaction single-shot
+                Models Claude · Source license CC0-1.0
+  Model/effort  Opus 5 · max
+  Confidence    escalate below 0.90
+  Liveness      35 minutes from start; exceeding it alerts and sets status failed
+  Issues,
+  escalations,
+  alerts        avikmaj/Generative-AI-Journalist, label "crucible-escalation"
+  Artifact date UTC, formatted YYYY-MM-DD
+
+DOES NOT OWN
+  The base-case valuation — MERIDIAN's. CRUCIBLE's posture is adversarial by design; it attacks the thesis it is given.
+
 CODENAME: CRUCIBLE
 HANDLE:   crucible
 TITLE:    Due Diligence Officer
@@ -1791,7 +2054,7 @@ The required behaviour is the same in every case: the employee continues,
 records the attempt in its artifact, and its verdict is unchanged.
 
 SUCCESS METRIC
-- Golden set of <<FILL: suggest 6>> past deals with known outcomes, including
+- Golden set of 6 past deals with known outcomes, including
   at least two that went wrong. Did CRUCIBLE surface the fact that actually
   broke the thesis? That is the whole test.
 ```
@@ -1809,7 +2072,7 @@ SUCCESS METRIC
    markers. Nothing else checks it.
 5. Wire the runner to `core/`. Do not reimplement budgets, retries, validation,
    run records or redaction per employee.
-6. Run in `--dry-run` for <<FILL: suggest 7>> days before granting any write access.
+6. Run in `--dry-run` for 7 days before granting any write access.
 7. Only then enable the trigger.
 
 ## 6. Open decisions for you

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.4.0
+
+Briefs resolved as far as the repositories allow.
+
+### Changed
+
+- Every brief now opens with a RESOLVED block carrying its library metadata,
+  model and effort, confidence threshold, liveness deadline and escalation
+  destination, plus a DOES NOT OWN boundary naming the neighbouring employee.
+- Seventeen markers that already carried a suggested value are now the value.
+  A marker states that something is unknown; one that answers itself was noise.
+- KEYSTONE carries the four repository names, the bundle limits read from the
+  builders, and the golden-set pass bars read from the rubric.
+- The authoring procedure no longer opens with a preparation step; a marker left
+  in place is the normal case and returns in OPEN QUESTIONS.
+
+Markers remaining: 46, all of them input paths, tool choices and source formats
+that only the operator knows. None were invented.
+
 ## 1.3.0
 
 Employee pack aligned to the Universal Master Prompt Library, and two model-API
