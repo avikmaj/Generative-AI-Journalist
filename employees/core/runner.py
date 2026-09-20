@@ -26,6 +26,14 @@ from .budget import Budget
 from .run import Run
 from .runrecord import today
 
+# The fields the base offers on every artifact. Anything outside this set came
+# from an employee's own procedure and is never filtered away.
+COMMON_FIELDS = frozenset({
+    "employee", "version", "run_id", "model", "prompt_sha", "input_digest",
+    "generated_at", "artifact_date", "artifact_path", "verdict", "confidence",
+    "status", "gaps", "escalations",
+})
+
 
 @dataclass
 class Deduction:
@@ -87,6 +95,48 @@ class EmployeeRunner:
         return f"reports/{self.handle}/{today()}.json"
 
     # -- everything below is the same for all sixteen ----------------------
+    @staticmethod
+    def conform(artifact: dict[str, Any], schema: dict) -> dict[str, Any]:
+        """Drop common fields this employee's schema does not declare.
+
+        The sixteen specifications agree on what a run *means* but not on what
+        its artifact *carries*: BLOODHOUND reports a regression and a commit
+        where KEYSTONE reports neither, and every schema closes itself with
+        ``additionalProperties: false``. Rather than teach the base which
+        fields each employee wants, offer the full common set and let the
+        schema — which section 5 of the specification is the source of — decide
+        what survives. The specification stays authoritative, and a field
+        renamed there stops appearing here instead of failing validation.
+
+        Only the common fields are filtered. A field an employee's procedure
+        returned is left alone: the employee asked for it, so a schema that
+        rejects it is a real disagreement and should fail loudly.
+        """
+        if schema.get("additionalProperties") is not False:
+            return artifact
+        declared = set(schema.get("properties", {}))
+        if not declared:
+            return artifact
+        return {k: v for k, v in artifact.items()
+                if k in declared or k not in COMMON_FIELDS}
+
+    def common_fields(self, run: Run, args: argparse.Namespace,
+                      confidence: float, verdict: str) -> dict[str, Any]:
+        """What every employee could report about a run, before conforming."""
+        return {
+            "employee": self.handle,
+            "version": self.version,
+            "run_id": run.record.run_id,
+            "model": self.model,
+            "prompt_sha": run.record.prompt_sha,
+            "input_digest": run.record.input_digest,
+            "generated_at": run.record.started_at,
+            "artifact_date": today(),
+            "artifact_path": self.artifact_path(args),
+            "verdict": verdict,
+            "confidence": confidence,
+        }
+
     def worst_case_confidence(self, deductions: list[Deduction]) -> float:
         """Confidence when every declared deduction applies at its cap.
 
@@ -138,19 +188,6 @@ class EmployeeRunner:
                     run.trace.event("confidence.deduction", reason=d.reason,
                                     applied=round(d.applied, 4), count=d.count)
 
-            artifact = {
-                "employee": self.handle,
-                "version": self.version,
-                "run_id": run.record.run_id,
-                "generated_at": run.record.started_at,
-                "artifact_path": self.artifact_path(args),
-                "verdict": outcome.verdict,
-                "confidence": confidence,
-                **outcome.fields,
-                "gaps": list(run.record.gaps),
-                "escalations": list(run.record.escalations),
-            }
-
             # The comparison is inclusive: a run landing exactly on the
             # threshold escalates, since a capped deduction can sum to exactly
             # the distance between 1.00 and it.
@@ -158,13 +195,21 @@ class EmployeeRunner:
                 run.escalate("confidence_below_threshold",
                              "; ".join(d.reason for d in outcome.deductions if d.count)
                              or "confidence below threshold")
-                artifact["escalations"] = list(run.record.escalations)
+
+            artifact = {
+                **self.common_fields(run, args, confidence, outcome.verdict),
+                **outcome.fields,
+                "status": run.resolve_status(),
+                "gaps": list(run.record.gaps),
+                "escalations": list(run.record.escalations),
+            }
+            artifact = self.conform(artifact, schema)
 
             if run.emit(reports_root / self.artifact_path(args), artifact, schema) is None:
                 print(canonical(artifact), end="")
 
         import sys
         print(f"status={run.record.status} confidence={run.record.confidence} "
-              f"verdict={artifact.get('verdict')} gaps={len(run.record.gaps)}",
+              f"verdict={outcome.verdict} gaps={len(run.record.gaps)}",
               file=sys.stderr)
         return 0
