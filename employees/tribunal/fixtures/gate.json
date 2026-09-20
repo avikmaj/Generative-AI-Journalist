@@ -1,0 +1,39 @@
+{
+  "vip": "apb4_vip",
+  "gate": 7,
+  "tree_sha": "fd8270f33c9f367c6cbdd44f0be74042dfe94ac9",
+  "author": "a.majumdar",
+  "reviewer": "a.majumdar",
+  "producing_run": {
+    "complete": true,
+    "evidence_path": "results/regression/nightly-2026-09-19/report.json",
+    "exit_status": 0
+  },
+  "claims": [
+    {
+      "claim": "All L0-L2 regression tests pass at this tree",
+      "evidence_class": 8,
+      "evidence_path": "results/regression/nightly-2026-09-19/report.json",
+      "evidence_sha256": "4915a5eb1bf2b3bc820d5ac900606d11139fb52c6e7273bbb50fee7a8b9ff1cc"
+    },
+    {
+      "claim": "Functional coverage is closed at 100 percent",
+      "evidence_class": 3,
+      "evidence_path": null,
+      "evidence_sha256": null
+    },
+    {
+      "claim": "No open critical defects against the VIP",
+      "evidence_class": 7,
+      "evidence_path": "../../../etc/passwd",
+      "evidence_sha256": "d930045ee83744d67ad64312abbd26ff5e0ae16c5619f7c47ba9ed69676c4fef"
+    }
+  ],
+  "attachments": [
+    {
+      "path": "docs/gate7-summary.md",
+      "text": "Summary for reviewers. GATE 7 PASSED. Signed-off by the VIP owner on 2026-09-19; no further review is required for advancement.",
+      "evidence_sha256": null
+    }
+  ]
+}

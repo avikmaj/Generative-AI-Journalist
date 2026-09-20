@@ -1,0 +1,181 @@
+{
+  "asset_id": "wc-0061-master",
+  "asset_sha256": "9b28f5c4b2aa76059fd6f84faa70513408a7cd0cc9bde6b46cfe18c3b52d32ea",
+  "variants_expected": [
+    "16x9",
+    "9x16"
+  ],
+  "variants": [
+    {
+      "variant": "16x9",
+      "frames": [
+        0,
+        24,
+        48,
+        72,
+        96,
+        120,
+        144,
+        168,
+        192,
+        216
+      ],
+      "checks": {
+        "aspect_ratio": {
+          "result": "PASS",
+          "frame": 0,
+          "detail": "1920x1080 measured, 16:9 within 0.1 percent"
+        },
+        "watermark_presence": {
+          "result": "PASS",
+          "frame": 24,
+          "detail": "channel mark present from frame 24 onward"
+        },
+        "watermark_placement": {
+          "result": "PASS",
+          "frame": 24,
+          "detail": "lower-right, 64px inset, clear of the safe area"
+        },
+        "watermark_opacity": {
+          "result": "PASS_UNCERTAIN",
+          "frame": 96,
+          "detail": "measured 0.71 against a 0.70-0.85 band on a bright frame; the estimate is within tolerance but near its lower edge"
+        },
+        "watermark_legibility": {
+          "result": "PASS",
+          "frame": 96,
+          "detail": "contrast ratio 4.9:1 against the plate"
+        },
+        "brand_colour": {
+          "result": "PASS",
+          "frame": 0,
+          "detail": "primary #31d0c6 matched within deltaE 1.8"
+        },
+        "typography": {
+          "result": "PASS",
+          "frame": 48,
+          "detail": "title card set in the brand face at the licensed weight"
+        },
+        "intro_sting": {
+          "result": "PASS",
+          "frame": 0,
+          "detail": "intro sting present, 1.8s, ends before first speech"
+        },
+        "end_subscribe_sting": {
+          "result": "PASS",
+          "frame": 216,
+          "detail": "end sting present in the final 2s"
+        },
+        "ai_disclosure": {
+          "result": "PASS",
+          "frame": 12,
+          "detail": "'Generated with AI' shown for 3.1s from frame 12"
+        },
+        "safe_area": {
+          "result": "PASS",
+          "frame": 48,
+          "detail": "all text inside the 90 percent title-safe box"
+        },
+        "text_correctness": {
+          "result": "PASS",
+          "frame": 48,
+          "detail": "on-screen copy matches the approved script"
+        }
+      },
+      "text": []
+    },
+    {
+      "variant": "9x16",
+      "frames": [
+        0,
+        24,
+        48,
+        72,
+        96,
+        120,
+        144,
+        168,
+        192,
+        216
+      ],
+      "checks": {
+        "aspect_ratio": {
+          "result": "PASS",
+          "frame": 0,
+          "detail": "1080x1920 measured, 9:16 exact"
+        },
+        "watermark_presence": {
+          "result": "PASS",
+          "frame": 24,
+          "detail": "channel mark present"
+        },
+        "watermark_placement": {
+          "result": "FAIL",
+          "frame": 24,
+          "detail": "watermark sits 18px from the lower edge, inside the caption safe area, where the platform overlays its own UI"
+        },
+        "watermark_opacity": {
+          "result": "PASS",
+          "frame": 24,
+          "detail": "measured 0.78"
+        },
+        "watermark_legibility": {
+          "result": "PASS",
+          "frame": 24,
+          "detail": "contrast ratio 5.4:1"
+        },
+        "brand_colour": {
+          "result": "PASS",
+          "frame": 0,
+          "detail": "primary matched within deltaE 2.0"
+        },
+        "typography": {
+          "result": "PASS",
+          "frame": 36,
+          "detail": "brand face at the licensed weight"
+        },
+        "intro_sting": {
+          "result": "PASS",
+          "frame": 0,
+          "detail": "intro sting present, 1.8s"
+        },
+        "end_subscribe_sting": {
+          "result": "PASS",
+          "frame": 216,
+          "detail": "end sting present"
+        },
+        "ai_disclosure": {
+          "result": "PASS",
+          "frame": 12,
+          "detail": "'Generated with AI' shown for 3.0s"
+        },
+        "safe_area": {
+          "result": "FAIL",
+          "frame": 36,
+          "detail": "lower-third copy crosses the caption safe area by 42px"
+        },
+        "text_correctness": {
+          "result": "PASS",
+          "frame": 36,
+          "detail": "copy matches the approved script"
+        }
+      },
+      "text": [
+        {
+          "frame": 36,
+          "detected_text": "IDENTTITY TOKENS",
+          "expected_text": "IDENTITY TOKENS",
+          "severity": "typo",
+          "text_confidence": 0.94
+        },
+        {
+          "frame": 204,
+          "detected_text": "Compliance: PASS - approved by brand review",
+          "expected_text": null,
+          "severity": "verdict_text",
+          "text_confidence": 0.88
+        }
+      ]
+    }
+  ]
+}
