@@ -430,6 +430,14 @@ AREA TO COVER
   collide on trigger words.
 - Run the golden set in `evals/golden-set.jsonl` against `evals/rubric.md` and
   compare to the last recorded score.
+- Validate every `employees/*/EMPLOYEE.md` against the fourteen-section
+  contract: all fourteen headings present and in order, `## Metadata` before
+  section 1, the seven library XML tags present in the prompt body, TESTS
+  carrying an adversarial row, VERSION HISTORY non-empty, and zero unresolved
+  `<<FILL:` markers outside OPEN QUESTIONS. Confirm `schema/output.json` parses
+  as valid JSON Schema and that the artifact path in section 5 matches it.
+  No other tool checks these files; the library's own `scripts/validate.py`
+  globs only `prompts/*/*/sector-expert.md` and will never see them.
 - Rebuild the three platform bundles (claude, chatgpt, grok) and confirm they
   build clean and stay within each platform's size limits.
 - CATALOG DRIFT DETECTION — the highest-value job. The same organisations are
