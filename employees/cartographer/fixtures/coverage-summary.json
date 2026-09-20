@@ -1,0 +1,106 @@
+{
+  "sources": [
+    "coverage.dat"
+  ],
+  "functional": {
+    "covered": 32,
+    "total": 41,
+    "percent": 78.05
+  },
+  "by_kind": {
+    "covergroup": {
+      "covered": 32,
+      "total": 41,
+      "percent": 78.05
+    },
+    "line": {
+      "covered": 4,
+      "total": 4,
+      "percent": 100.0
+    },
+    "branch": {
+      "covered": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "toggle": {
+      "covered": 0,
+      "total": 1,
+      "percent": 0.0
+    }
+  },
+  "holes": [
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.cp_addr.err_region",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 357,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.cp_addr.err_region",
+      "comment": "err_region"
+    },
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.cp_wdata_corner.allones",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 370,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.cp_wdata_corner.allones",
+      "comment": "allones"
+    },
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.x_dir_addr.<rd,err_region>",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 385,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.x_dir_addr.<rd,err_region>",
+      "comment": "<rd,err_region>"
+    },
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.x_dir_addr.<wr,err_region>",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 385,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.x_dir_addr.<wr,err_region>",
+      "comment": "<wr,err_region>"
+    },
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,byte0>",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 386,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,byte0>",
+      "comment": "<rd,byte0>"
+    },
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,byte3>",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 386,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,byte3>",
+      "comment": "<rd,byte3>"
+    },
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,halfword>",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 386,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,halfword>",
+      "comment": "<rd,halfword>"
+    },
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,fullword>",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 386,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,fullword>",
+      "comment": "<rd,fullword>"
+    },
+    {
+      "name": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,others>",
+      "kind": "covergroup",
+      "file": "tb/apb_pkg.sv",
+      "line": 386,
+      "hierarchy": "tb_top.u_env.u_cov.cg_apb.x_dir_strb.<rd,others>",
+      "comment": "<rd,others>"
+    }
+  ]
+}

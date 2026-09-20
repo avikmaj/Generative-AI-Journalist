@@ -5,10 +5,10 @@
 | Field | Value |
 |---|---|
 | ID | employee-cartographer |
-| Version | 1.0.0 |
+| Version | 1.1.0 |
 | Collection | 30-technology-engineering |
 | Sector | design-verification-uvm |
-| Tags | coverage-closure, ucdb, functional-coverage, hole-classification, uvm, vplan, waiver-candidate |
+| Tags | coverage-closure, functional-coverage, hole-classification, uvm, systemverilog, vplan, waiver-candidate |
 | Risk | medium |
 | Complexity | advanced |
 | Interaction | single-shot |
@@ -74,12 +74,22 @@ All paths are resolved against `${DV_ROOT}`, which must be present in the enviro
 
 ### 3.1 Coverage database (primary)
 
-- **Path:** `${DV_ROOT}/coverage/merged.ucdb`
-- **Format:** Questa UCDB (binary). CARTOGRAPHER never parses the binary directly. It invokes `vcover report -details -html=0 -output <tmp> ${DV_ROOT}/coverage/merged.ucdb` and a `vcover report -memory`-equivalent merge-provenance dump via the wrapper in `employees/core/`, and consumes the textual report. The exact wrapper invocation and the `vcover` binary location are `<<FILL: absolute path to the vcover executable, and the exact vcover report invocation and flags sanctioned by the DV team for machine consumption>>`.
+**The coverage database is read through a source adapter, selected by `DV_COV_SOURCE`.** CARTOGRAPHER never parses a vendor binary itself and never depends on one vendor's report dialect. Both adapters produce the same neutral shape, and everything after section 3.1 is written against that shape alone.
+
+| `DV_COV_SOURCE` | Path | How it is read |
+|---|---|---|
+| `uvmstudio` (default) | `${DV_ROOT}/coverage/coverage-summary.json` | Read directly. Already the neutral shape: the platform's reader decodes the simulator's database and emits it. |
+| `questa_ucdb` | `${DV_ROOT}/coverage/merged.ucdb` | Binary. Read by invoking `vcover` through the wrapper in `employees/core/` and parsing its textual report into the neutral shape. |
+
+**Neutral shape.** An object carrying `sources` (array of contributing database paths), `functional` (`covered`, `total`, `percent`), `by_kind` (a map from coverage kind to `covered` / `total` / `percent`), and `holes` (array of objects with `name`, `kind`, `file`, `line`, `hierarchy`, `comment`). `name` is the fully-qualified bin path — `<covergroup>.<coverpoint>.<bin>`, and `<cp_a,cp_b>` for a cross bin.
+
+**Functional coverage is covergroup bins only.** `by_kind` also carries `line`, `branch`, `expr`, `toggle`, `fsm_state` and `fsm_arc`. Those are *code* coverage. They are reported alongside and never summed into, averaged with, or substituted for functional closure — conflating them overstates closure, which is the single most common way a coverage report lies. A run whose `functional.total` is zero is the empty case below, even when code coverage is at 100%.
+
+**Selecting `questa_ucdb`** additionally requires `<<FILL: absolute path to the vcover executable, and the exact vcover report invocation and flags sanctioned by the DV team for machine consumption>>`. This is an open question against that adapter only; the default adapter needs nothing beyond the file.
 - **Expected shape of the consumed report:** one record per covergroup instance carrying instance path, covergroup type name, option settings (`at_least`, `weight`, `auto_bin_max`), per-bin name, per-bin hit count, and per-bin `at_least` target; plus a merge-provenance block listing every contributing test record with its test name, simulator version string, design top, and UCDB creation timestamp.
-- **Missing:** file does not exist or is zero bytes → status `failed`, reason `input_missing:coverage_db`. No artifact. Alert raised.
-- **Empty:** report parses but contains zero covergroup instances → this is the whole-input-class rule of section 6.5. Status `escalated`, reason `coverage_db_empty`. A partial artifact is written carrying an empty `holes` array, `summary.coverage_by_group` empty, and one gap entry `"coverage database contained zero covergroup instances"`.
-- **Malformed:** `vcover` exits non-zero, or the report cannot be parsed into the shape above → up to 4 attempts per section 8.4, then status `failed`, reason `input_malformed:coverage_db`.
+- **Missing:** the selected adapter's file does not exist or is zero bytes → status `failed`, reason `input_missing:coverage_db`. No artifact. Alert raised.
+- **Empty:** the source parses but carries zero covergroup bins (`functional.total == 0`) → this is the whole-input-class rule of section 6.5. Status `escalated`, reason `coverage_db_empty`. A partial artifact is written carrying an empty `holes` array, `summary.coverage_by_group` empty, and one gap entry `"coverage database contained zero covergroup instances"`.
+- **Malformed:** the source is not valid JSON, or `vcover` exits non-zero, or the result cannot be parsed into the neutral shape above → up to 4 attempts per section 8.4, then status `failed`, reason `input_malformed:coverage_db`.
 
 ### 3.2 Verification plan (from ARIADNE)
 
@@ -139,7 +149,7 @@ Every step below is executed in order. A step that aborts the run names the stat
 
 2. **Compute the idempotency key.** Digest the coverage database file bytes (SHA-256) and read `plan_sha` from `verification_plan.json` (or the literal string `"absent"` if the vplan is missing or malformed). Form the key per section 9. If a completed run record exists with an identical key and terminal status in `{ok, partial, escalated}`, stop immediately: emit a run record with status `ok`, `gaps: ["duplicate run suppressed by idempotency key"]`, `artifacts: []`, and write nothing. A prior `failed` run does not suppress a retry.
 
-3. **Read and validate the coverage database.** Invoke the `vcover` wrapper. Parse the merge-provenance block. For each contributing test record, extract simulator version string and design top. **Decision rule (merge compatibility):** if the set of distinct `design_top` values across contributing records has cardinality > 1, or the set of distinct simulator version strings has cardinality > 1, the merge is incompatible → status `escalated`, reason `incompatible_merge`, and a partial artifact is written with every hole carrying the gap `"merged database mixes <n> design tops / <m> simulator versions — totals not comparable"` and the merge-mismatch penalty of section 6.2 applied to every hole. Do not report an aggregate coverage percentage in this case; `summary.coverage_by_group` entries are emitted with `percent_suppressed: true`.
+3. **Read and validate the coverage database.** Read through the adapter selected by `DV_COV_SOURCE` (§3.1). Establish merge provenance: for `uvmstudio`, from the regression metadata accompanying each contributing source (`backend`, `backend_version`, `git_commit` and design top); for `questa_ucdb`, from the `vcover` merge-provenance block. Either way, extract a simulator version string and a design top per contributing record. When the source carries no provenance at all, set `merge_provenance_available = false`, record gap `merge_provenance_absent`, and apply the merge-mismatch penalty once — an unverifiable merge is not a verified one. **Decision rule (merge compatibility):** if the set of distinct `design_top` values across contributing records has cardinality > 1, or the set of distinct simulator version strings has cardinality > 1, the merge is incompatible → status `escalated`, reason `incompatible_merge`, and a partial artifact is written with every hole carrying the gap `"merged database mixes <n> design tops / <m> simulator versions — totals not comparable"` and the merge-mismatch penalty of section 6.2 applied to every hole. Do not report an aggregate coverage percentage in this case; `summary.coverage_by_group` entries are emitted with `percent_suppressed: true`.
 
 4. **Read the configuration matrix.** Build the executed set `E = { config_id : executed == true }` and the scope map `S = { covergroup_instance_path → set of config_ids expected to sample it }`. On missing/malformed input, apply section 3.3's conservative rule and set the flag `config_matrix_available = false`.
 
@@ -214,7 +224,7 @@ stop.
 </role>
 
 <context>
-You are given holes extracted from a merged Questa UCDB, the verification plan
+You are given holes extracted from a merged coverage database, the verification plan
 that ARIADNE produced, the regression configuration matrix that records which
 configurations were actually executed, and excerpts of SystemVerilog constraint
 source.
@@ -709,7 +719,7 @@ Exponential backoff on HTTP 429, HTTP 5xx and timeout. Delays `1s, 2s, 4s, 8s` w
 sha256( coverage_db_sha256 || "\x1f" || vplan_sha )
 ```
 
-where `coverage_db_sha256` is the SHA-256 of the bytes of `${DV_ROOT}/coverage/merged.ucdb`, and `vplan_sha` is the `plan_sha` field from `verification_plan.json`, or the literal string `absent` when the vplan is missing, empty or malformed.
+where `coverage_db_sha256` is the SHA-256 of the bytes of the file the selected adapter read (§3.1), and `vplan_sha` is the `plan_sha` field from `verification_plan.json`, or the literal string `absent` when the vplan is missing, empty or malformed.
 
 **Two runs are "the same run"** when their dedupe keys are equal. The trigger time, the artifact date, the run_id, the `--apply` flag and the wall-clock date are **not** part of the key. A nightly run and a manual backfill over the same merged database and the same vplan are the same run.
 
@@ -792,7 +802,7 @@ A `failed` run never writes an artifact. A `partial` or `escalated` run always w
 
 ## 12. SUCCESS METRIC
 
-**Golden set:** `evals/golden.jsonl`. Each line is a real past coverage hole drawn from previous merges of `${DV_ROOT}/coverage/merged.ucdb`, carrying the bin record, the configuration-matrix slice in force at the time, the vplan binding, the relevant constraint excerpt, and the **known-correct** `state` and `classification` adjudicated by a DV engineer. The minimum size and the composition targets per classification are `<<FILL: minimum number of golden-set entries, and the required minimum count per classification label, agreed with the DV team>>`.
+**Golden set:** `evals/golden.jsonl`. Each line is a real past coverage hole drawn from previous merges read through either adapter, carrying the bin record, the configuration-matrix slice in force at the time, the vplan binding, the relevant constraint excerpt, and the **known-correct** `state` and `classification` adjudicated by a DV engineer. The minimum size and the composition targets per classification are `<<FILL: minimum number of golden-set entries, and the required minimum count per classification label, agreed with the DV team>>`.
 
 **What the golden set grades:**
 
@@ -827,22 +837,24 @@ A `failed` run never writes an artifact. A `partial` or `escalated` run always w
 | T-4 | **Boundary — confidence lands exactly on the threshold** | T-1 input, plus a prior artifact showing one group's `total_bins` dropped from 48 to 44 while `covered_percent` rose from 91.2 to 93.1. The model-shrink penalty applies to every hole in that group and no other penalty is in play; the mean is constructed so that run confidence rounds to exactly `0.80`. | Because the operator is `<=`, `0.80 <= 0.80` is true and the run **escalates**. `summary.bin_count_regression` carries the group with 48/44 and 91.2/93.1 side by side. No `covered_percent` for that group is presented as an improvement without the regression entry beside it. This test exists solely to pin the inclusive boundary: were the operator `<`, this run would ship `ok` and a shrinking coverage model would pass unnoticed. | `escalated` |
 | T-5 | **Idempotency — repeat run on an unchanged database** | T-1 executed and completed `ok`; the runner is invoked again with `--apply` and no input has changed. | No model call is made. No USD is spent. The existing `reports/cartographer/2026-09-20.json` is left byte-for-byte untouched. No second issue is opened. A run record is persisted with `tokens_used: 0`, `usd_spent: 0.0`, `artifacts: []`, and `gaps: ["duplicate run suppressed by idempotency key"]`. Exit code 0. | `ok` |
 | T-6 | **Budget breach mid-classification** | A `merged.ucdb` carrying 2,400 holes, large enough that pre-flight estimates under 80% of the token ceiling but actual consumption crosses 200000 tokens during PROCEDURE step 9. | The run aborts the instant the ceiling is crossed. **No artifact is written**, not even a partial one — a budget-truncated hole list is of unknown completeness. The run record carries `status: "failed"`, `budget.tokens_used >= budget.tokens_max`, and reason `budget_exceeded:tokens`. An alert issue is opened per F-5. | `failed` |
+| T-7 | **Structural cross holes on a real covergroup** | `golden_apb`'s `cg_apb`: 41 covergroup bins, 32 covered, 9 holes. Five of the nine are `x_dir_strb.<rd,*>` — the cross of direction against byte strobe, where the read bins can never be hit because an APB read carries no byte strobes. The `ignore_bins` that would remove them is not expressible on this backend, so they are present and permanently zero. Code coverage in the same source reads `line` 4/4 and `branch` 2/2. | `functional.percent` is `78.05` — computed over covergroup bins alone. Line and branch coverage at 100% do not raise it, appear in `summary.coverage_by_kind` marked as code coverage, and never enter closure. The five `x_dir_strb.<rd,*>` bins classify `UNREACHABLE` with a structural argument naming the protocol reason, and each carries `waiver_candidate.approved: false`; being structurally unhittable is an argument for a waiver, never an approval of one. `cp_addr.err_region` and `x_dir_addr.<rd,err_region>` / `<wr,err_region>` classify `MISSING_STIMULUS` — the region is addressable and simply was not driven — and the two cross holes cite the coverpoint hole as their cause rather than being reported as three independent gaps. `cp_wdata_corner.allones` classifies `MISSING_STIMULUS`. No exclusion is created in any form. | `ok` |
 
 ---
 
 ## 14. VERSION HISTORY
 
+- `1.1.0 — The coverage database is now read through a source adapter selected by DV_COV_SOURCE, defaulting to uvmstudio and keeping questa_ucdb as an alternate. §3.1 defines one neutral shape and everything after it is written against that shape, so adding a vendor means adding an adapter rather than editing classification. Made explicit that functional coverage is covergroup bins only and that line, branch, expr, toggle and FSM coverage are reported alongside but never counted toward closure. Merge provenance generalised in §4 step 3, with an unverifiable merge penalised rather than assumed sound. The vcover open question is now scoped to the questa_ucdb adapter and no longer blocks deployment. Test T-7 added over a real covergroup with structural cross holes.`
 - `1.0.0 — Initial version.`
 
 ---
 
 ## OPEN QUESTIONS
 
-- `<<FILL: absolute path to the vcover executable, and the exact vcover report invocation and flags sanctioned by the DV team for machine consumption>>` — INPUTS §3.1. Without it the coverage database cannot be read and every run ends `failed` with `input_malformed:coverage_db`.
+- `<<FILL: absolute path to the vcover executable, and the exact vcover report invocation and flags sanctioned by the DV team for machine consumption>>` — INPUTS §3.1, and **only** for the `questa_ucdb` adapter. Without it, setting `DV_COV_SOURCE=questa_ucdb` ends every run `failed` with `input_malformed:coverage_db`. The default `uvmstudio` adapter is unaffected and needs nothing beyond its file, so this no longer blocks deployment.
 - `<<FILL: minimum number of golden-set entries, and the required minimum count per classification label, agreed with the DV team>>` — SUCCESS METRIC §12. Without it the 80% accuracy bar is computed over an undefined denominator and the eval gate is not meaningful.
 
 ## STATED ASSUMPTIONS
 
-- INPUTS §3.1 — `${DV_ROOT}/coverage/merged.ucdb`, Questa UCDB format — change here if it does not match.
+- INPUTS §3.1 — `DV_COV_SOURCE` defaults to `uvmstudio`, reading `${DV_ROOT}/coverage/coverage-summary.json`, because that is what the reference regression environment produces. Set `DV_COV_SOURCE=questa_ucdb` to read `${DV_ROOT}/coverage/merged.ucdb` through `vcover` instead; that adapter carries the open question above. Adding a vendor means adding an adapter that emits the neutral shape, never editing the classification logic.
 - INPUTS §3.3 — `${DV_ROOT}/regression/config-matrix.yaml` — change here if it does not match.
 - INPUTS §3.4 — `${DV_ROOT}/dv/env/` and `${DV_ROOT}/dv/tests/` as the constraint source trees — change here if it does not match.

@@ -1,0 +1,12 @@
+UVM_INFO @ 0: reporter [RNTST] Running test apb_error_test...
+UVM_INFO tb/apb_pkg.sv(198) @ 0: uvm_test_top [CFG] seed=1 backend=verilator uvm=2020.3.1
+UVM_INFO tb/apb_pkg.sv(210) @ 0: uvm_test_top.env.agent.driver [DRV] reset released, starting sequence
+UVM_ERROR tb/apb_pkg.sv(488) @ 640: uvm_test_top.env.sb [SB_PSLVERR] PSLVERR asserted for address 0x00000100 outside the mapped region
+--- UVM Report Summary ---
+
+** Report counts by severity
+UVM_INFO :   18
+UVM_WARNING :    0
+UVM_ERROR :    1
+UVM_FATAL :    0
+- tb/tb_top.sv:96: Verilog $finish
