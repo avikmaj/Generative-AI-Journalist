@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.3.0
+
+Employee pack aligned to the Universal Master Prompt Library, and two model-API
+corrections.
+
+### Fixed
+
+- The determinism rule instructed `temperature: 0` on every classification call
+  while routing reasoning to `claude-opus-5`, which rejects sampling parameters
+  with HTTP 400. The rule is now split by model, and records that the Messages
+  API exposes no seed parameter.
+- Corrected the Haiku model identifier to `claude-haiku-4-5`; the previous value
+  carried a date suffix.
+
+### Added
+
+- Sections 13 (Tests) and 14 (Version history) from the library template,
+  raising the specification to fourteen required sections.
+- A conformance block covering the library's metadata header, XML-tagged prompt
+  body, evidence-labelling discipline and stop conditions.
+- Pre-resolved library metadata for all sixteen employees, mapping each to a
+  real collection and sector in that repository.
+- A verified drift in the library itself as KEYSTONE's first golden-set case.
+
 ## 1.2.0
 
 AI employee roster and prompt authoring pack.
